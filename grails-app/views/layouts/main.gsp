@@ -8,7 +8,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><g:layoutTitle default="BoaTree"/></title>
+    <!--
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    -->
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <link rel="apple-touch-icon" href="${resource(dir: 'images', file: 'apple-touch-icon.png')}">
     <link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">
@@ -18,12 +20,23 @@
     <r:layoutResources />
 </head>
 <body  style="border: thin solid darkgrey; padding: 2px; margin: 2px;">
-<div style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainMenu">Header Menu Bar</div>
-<div  style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainBody">
+<div style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainMenu">mainMenu
+
+    <div style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainSecurity">mainSecurity
+<sec:ifLoggedIn>
+    Welcome Back!
+</sec:ifLoggedIn>
+<sec:ifNotLoggedIn>
+    <g:link controller='login' action='auth'>Login</g:link>
+</sec:ifNotLoggedIn>
+                                     </div>
+
+</div>
+<div  style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainBody">mainBody
 <g:layoutBody/>
 </div>
-<div class="footer" role="contentinfo" style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainFooter">Footer</div>
-<div id="spinner" class="spinner" style="display:none; border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainSpinner"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
+<div class="footer" role="contentinfo" style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainFooter">mainFooter</div>
+<div id="spinner" class="spinner" style="display:none; border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainSpinner">mainSpinner<g:message code="spinner.alt" default="Loading&hellip;"/></div>
 <g:javascript library="application"/>
 <r:layoutResources />
 </body>

@@ -7,7 +7,7 @@ class UrlMappings {
 			}
 		}
 
-		"/"(view:"/workbench")
+		"/"(controller:"workbench")
 		"500"(view:'/error')
 	}
 }

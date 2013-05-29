@@ -88,6 +88,8 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug: 'au.gov.environment.ibis.boatree'
 }
 
 // Added by the Spring Security Core plugin:
