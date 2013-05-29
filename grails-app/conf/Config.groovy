@@ -89,10 +89,22 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 
-    debug: 'au.gov.environment.ibis.boatree'
+    debug  'au.gov.environment.ibis',
+           'au.gov.environment.ibis.grails.ibisauth'
 }
 
 // Added by the Spring Security Core plugin:
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'au.gov.environment.ibis.boatree.IbisUser'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'au.gov.environment.ibis.boatree.IbisUserIbisRole'
-grails.plugins.springsecurity.authority.className = 'au.gov.environment.ibis.boatree.IbisRole'
+// used by the dao authentication provider and user service, which we are bypassing
+//grails.plugins.springsecurity.userLookup.userDomainClassName = 'au.gov.environment.ibis.boatree.IbisUser'
+//grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'au.gov.environment.ibis.boatree.IbisUserIbisRole'
+//grails.plugins.springsecurity.authority.className = 'au.gov.environment.ibis.boatree.IbisRole'
+
+//grails.plugins.springsecurity.providerNames = [
+//        'ibisAuthenticationProvider',
+//        'anonymousAuthenticationProvider',
+//        'rememberMeAuthenticationProvider']
+
+grails.plugins.springsecurity.providerNames = [
+        'ibisAuthenticationService',
+//        'anonymousAuthenticationProvider',
+        'rememberMeAuthenticationProvider']
