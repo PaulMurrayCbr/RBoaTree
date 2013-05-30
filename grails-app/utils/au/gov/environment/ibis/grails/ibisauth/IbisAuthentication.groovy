@@ -2,6 +2,9 @@ package au.gov.environment.ibis.grails.ibisauth
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.CredentialsContainer
+
+import java.security.Principal
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,9 +28,9 @@ class IbisAuthentication implements Authentication {
 
     Object getCredentials() { return c;}
 
-    Object getDetails() { return d;}
+    Object getDetails() { return "no details, really";}
 
-    Object getPrincipal() { return this;}
+    Object getPrincipal() { return d;}
 
     boolean isAuthenticated() { return true; }
 

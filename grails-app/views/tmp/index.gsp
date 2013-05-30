@@ -15,7 +15,14 @@
 <body>
 <div  style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="tmpBody">tmpBody
     Spring security service is ${sec}          <br>
-    Msg ${msg}
+    Msg ${msg}<br>
+
+    <sec:ifLoggedIn>sec:ifLoggedIn<br></sec:ifLoggedIn>
+    <sec:ifNotLoggedIn>sec:ifNotLoggedIn<br></sec:ifNotLoggedIn>
+    <sec:ifAllGranted roles="NO_ROLES">ifAllGranted NO_ROLES<br></sec:ifAllGranted>
+    <sec:ifAnyGranted roles="NO_ROLES">ifAnyGranted NO_ROLES<br></sec:ifAnyGranted>
+    <sec:ifNotGranted roles="NO_ROLES">ifNotGranted NO_ROLES<br></sec:ifNotGranted>
+    Username <sec:loggedInUserInfo field="username"/><br>
 </div>
 </body>
 </html>

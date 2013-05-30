@@ -24,12 +24,14 @@
 
     <div style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainSecurity">mainSecurity
 <sec:ifLoggedIn>
-    Welcome Back!
+    Welcome Back <sec:loggedInUserInfo field="username"/>!
+    <g:link controller='logout'>Logout</g:link>
 </sec:ifLoggedIn>
 <sec:ifNotLoggedIn>
-    <g:link controller='login' action='auth'>Login</g:link>
+    <g:link controller='login'  action='auth'>Login</g:link>
 </sec:ifNotLoggedIn>
-                                     </div>
+<g:link controller='tmp'>TMP</g:link>
+</div>
 
 </div>
 <div  style="border: thin solid darkgrey; padding: 2px; margin: 2px;" id="mainBody">mainBody

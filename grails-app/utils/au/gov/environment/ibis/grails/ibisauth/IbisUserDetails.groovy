@@ -3,9 +3,11 @@ package au.gov.environment.ibis.grails.ibisauth
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.User
 
-class IbisUserDetails extends User {
+import java.security.Principal;
+
+class IbisUserDetails extends User implements Principal {
     private static final log = LogFactory.getLog(this)
 
     public static IbisUserDetails buildSimpleUser(String username) {
@@ -33,6 +35,11 @@ class IbisUserDetails extends User {
                     ", authorities:" + authorities;
 
         return s;
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 
     public void eraseCredentials () {
