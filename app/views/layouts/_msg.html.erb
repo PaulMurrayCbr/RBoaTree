@@ -1,0 +1,34 @@
+<div style="margin: 0">
+	<span class="badge badge-<%=msg.cssclass%>">&nbsp;</span>
+	<%
+	if msg.ok?
+	%>
+	<%
+	else
+	%>
+	<%
+	end
+	if msg.msg
+		if msg.extra
+	%>
+			<strong><%= msg.msg%></strong> <%= msg.extra.inspect %>
+	<%
+		else
+	%>
+			<%= msg.msg%>
+<%
+		end
+	end
+%>
+<%
+if not msg.empty?
+%>
+	<% msg.each do |mm| %>
+	<div style="margin-top: 0; margin-bottom:0; margin-left: 2em; margin-right:0;">
+		<%= render partial: 'layouts/msg', object: mm %>
+	</div>
+	<% end %>
+<%
+end
+%>
+</div>

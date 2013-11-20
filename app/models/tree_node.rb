@@ -9,4 +9,7 @@ class TreeNode < ActiveRecord::Base
   has_many :supernode_link, class_name: :TreeLink, foreign_key: :sub_node_id
   has_many :subnode_link, class_name: :TreeLink, foreign_key: :super_node_id
 
+  def end?
+    id == 0
+  end
 end

@@ -2,7 +2,7 @@
 if flash[:messages]
   flash[:messages].each do | msg | %>
     <div>
-   Need do display message <TT><%= msg.inspect %></TT>
+    	<% render partial: 'layouts/msg', object: msg %>
     </div>
 <% 
   end
