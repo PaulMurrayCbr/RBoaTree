@@ -1,0 +1,87 @@
+<h1>BoaTree proof-of-concept app</h1>
+<div>
+	<p>
+		This application is a proof-of-concept test of the Boatree data structure and versioning algorithm.
+	</p>
+	<p>
+		The overall goals of this data stucture and algorithm are
+		<ol>
+			<li>
+				to create trees which are persistent and yet editable
+			</li>
+			<li>
+				to make it possible to
+				give some arrangment of nodes a permanent identifier, which can always be retrieved
+			</li>
+			<li>
+				to make it possible to share tree fragments between trees
+			</li>
+			<li>
+				to make it possible to manage what happens when a shared tree fragment is updated
+			</li>
+			<li>
+				to do this without minting unnecessary persistent identifiers as trees are edited
+			</li>
+		</ol>
+	</p>
+	<p>
+		It holds data on trees of - well, of anything really, although we intend to use it for taxonomy. In this test
+		application, you may give each tree node a short name or description. No checking is done as to the content of these descriptions.
+		In our target application, we indent to do things such as testing that taxonomic classifications do not contain duplicate names.
+	</p>
+	<p>
+		The focus of this application is the tracking and versioning of trees as they change. Behind the scenes, we use raw PostGres SQL to update
+		the trees as you perform simple, atomic edits. Our goal is to demonstrate that this SQL transforms the tree in valid ways, and that
+		the result is useful and sufficient to accomplish our goals with thespect to the mainenance of a taxonomy (or several).
+	</p>
+	<p class="muted">
+		PS: the 'boa' in 'boatree' stands for biodiversity.org.au
+	</p>
+	<h5>Caveats:</h5>
+	<p>
+		<strong> This is a test, proof-of-concept app. </strong>
+	</p>
+	<ul>
+		<li>
+			This application contains no login or accounts - it is simply a raw rails application. This means that anyone using it can erase the entire
+			data set at any time.
+		</li>
+		<li>
+			It does not have sophisticated managment of user sessions and transactions, meaning that its possible that data may be corrupted if
+			multiple people use it simultaneously.
+		</li>
+		<li>
+			It also does not have means for ensuring the uniqueness of persistent identifiers. We are simply using the database
+			serial number and a uri prefix of 'http://example.org/tree-node/'
+		</li>
+	</ul>
+</div>
+<div>
+	<h3>So, what do you do with this app?</h3>
+	<ul>
+		<li>
+			To begin, create a 'tree'. Add nodes to that tree (which will be in 'draft' mode). 'Apply' the nodes to the tree.
+		</li>
+		<li>
+			Then alter nodes that are in the tree - add new ones, delete existing ones.
+		</li>
+		<li>
+			Create more than one tree. Use nodes from one tree in another one.
+		</li>
+		<li>
+			Experiment with the link types - tracking, versioning, and fixed.
+		</li>
+		<li>
+			Try a complex merge.
+		</li>
+		<li>
+			Visit the <%= link_to "validation page", {controller: :validate_data, action: :index} %>, and see what invariants are always true of the data
+		</li>
+		<li>
+			Examine the nodes and see how they link. Try out the comparison tool.
+		</li>
+		<li>
+			Finally - examine the SQL and data structures to see the transformations that are performed.
+		</li>
+	</ul>
+</div>

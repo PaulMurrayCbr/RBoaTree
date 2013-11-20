@@ -1,0 +1,25 @@
+<h1>Validate data structure</h1>
+
+<div>
+	<p>
+		This page runs a set of validation checks on the tree database. The atomic operations that manipulate the tree should always leave it in a valid
+		state. However, the tree database may fail these checks if:
+		<ol>
+			<li>
+				You use some tool to directly update the tables.
+			</li>
+			<li>
+				There are transaction isolation problems.
+			</li>
+		</ol>
+		This proof-of-concept test app does not specifically implement any transaction isolation.
+	</p>
+	<p>
+		If the data in the database should become invalid, then you can "fix" it by erasing everything. We do not have a 'repair' process at this point.
+	</p>
+</div>
+<div>
+	<form action="validate">
+		<button class="btn btn-primary">Run Validation!</button>
+	</form>
+</div>

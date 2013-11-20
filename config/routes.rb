@@ -1,4 +1,11 @@
 Rboatree::Application.routes.draw do
+  
+  root 'home#index'
+
+  get 'validation' => 'validate_data#index'
+  get 'validate' => 'validate_data#validate'
+
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
