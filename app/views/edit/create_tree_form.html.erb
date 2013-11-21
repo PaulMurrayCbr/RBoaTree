@@ -3,6 +3,27 @@
 end  %>
 <h1>Create tree</h1>
 
+<p>
+	This action will create a new tree. A new tree comprises two nodes.
+</p>
+<p>
+	First, it has a 'tree' node. The tree node should never be updated. It has a persistent URI named (in this sample app)
+	<tt>http://example.org/tree#<i>[tree name]</i></tt>. This means that the tree name must be unique across the application, and you ought to pick one
+	that makes sense as part of a URI. Avoid spaces and be wary of using mixed case. Technically, URIs are supposed to be case-insensitive.
+</p>
+<p>
+	Next, it has a 'root' node. The root node has a persistent URI named according to a generated node id, like any other node. As you create new versions of
+	this root node - by editing its structure - new replacement root nodes will be created.
+</p>
+<p>
+	The tree node is connected to the root node with a <u>tracking</u> link. This means that whenever the root node is <u>versioned</u>, the tree node
+	will be updated to point to the new root node. Thus, the tree uri always points to the <u>current</u> root node, but the entire history of all the root nodes
+	remains in place.
+</p>
+<p>
+	Generally, you would put your top-level taxa under the root node.
+</p>
+
 <%= form_tag action: :create_tree_action, class: 'form-inline' do  %>
 <fieldset>
 	<%= text_field_tag :tree_name %>

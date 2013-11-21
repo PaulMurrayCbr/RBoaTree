@@ -60,7 +60,6 @@ CREATE TABLE tree_link
   created_at timestamp without time zone,
   updated_at timestamp without time zone,
   -- boatree columns
-  name character varying(255),
   super_node_id integer references tree_node, -- 'super' is a reserved word in many languages
   sub_node_id integer references tree_node,
   link_type char(1) not null constraint link_type_enum check (link_type in ('F','T',''))
@@ -75,3 +74,4 @@ ALTER TABLE tree_link OWNER TO "tree-admin";
 grant select on tree_link to public;
 grant insert, update, delete on tree_link to "tree-appuser";
 
+grant all on all sequences in schema public to "tree-appuser";

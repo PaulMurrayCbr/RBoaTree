@@ -7,23 +7,27 @@ end  %>
 </div>
 
 <% if flash[:sql] and !flash[:sql].empty? %>
-
-<h3>SQL Executed</h3>
-	<% flash[:sql].each do |sql| %>
-		<div>
-			<hr>
-			<pre><%=sql.sql.strip%></pre>
-			<% if sql.binds and !sql.binds.empty?%>
-			<strong>Bindings</strong><ol>
-			<% sql.binds.each do |bb| %>
-				<li><%=bb%></li>
-			<% end %>
-			</ol>
-			<% end %>
-			<% if sql.result %>
-			Rows: <%=sql.result%>, 
-			<% end %>
-			Time: <%=sql.ms%>ms
-		</div>
-<% end 
-end %>
+	<h3>SQL Executed</h3>
+	<div class="container-fluid">
+		<% flash[:sql].each do |sql| %>
+			<div class="row-fluid">
+				<div class="span9">
+					<pre><%=sql.sql.strip%></pre>
+				</div>
+				<div class="span3">
+					<% if sql.binds and !sql.binds.empty?%>
+						<strong>Bindings</strong><ol>
+						<% sql.binds.each do |bb| %>
+							<li><tt><%=bb%></tt></li>
+						<% end %>
+						</ol>
+					<% end %>
+					<% if sql.result %>
+						Result: <%=sql.result%>, 
+					<% end %>
+					Time: <%=sql.ms%>ms
+				</div>
+			</div>
+		<% end %>
+	</div>
+<% end %>
