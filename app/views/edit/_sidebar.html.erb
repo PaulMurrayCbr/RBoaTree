@@ -1,7 +1,10 @@
 <ul  class="nav nav-list">
 	<li><%= link_to "About", {controller: :edit, action: :about} %></li>
+	<li><hr></li>
 	<% if defined? @currnode %>
 		<li><%= link_to "Node #{@currnode.id}", {controller: :edit, action: :index, id: @currnode.id} %></li>
 	<% end %>	
-	<li><%= link_to "Create a tree", {controller: :edit, action: :create_tree} %></li>
+	<li><%= link_to "Create a tree", {controller: :edit, action: :create_tree_form} %></li>
+	<li><hr></li>
+	<li><%= link_to "Clear the tree", {controller: :edit, action: :clear_tree_form} %></li>
 </ul>

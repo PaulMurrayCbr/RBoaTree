@@ -18,7 +18,7 @@ class ValidateDataController < ApplicationController
   private 
 
   def test_tables_ok
-    msg = @results.add('check test facility')
+    msg = @results.add('self check')
     msg.add 'default'
     msg.ok 'ok'
     msg.info 'info'

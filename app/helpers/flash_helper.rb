@@ -22,6 +22,10 @@ module FlashHelper
     mm.error msg, extra
   end  
    
+  def exception(e) 
+    mm.error 'Error!', e.to_s
+  end  
+   
   private
   
   def mm

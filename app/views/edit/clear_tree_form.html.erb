@@ -1,0 +1,13 @@
+<% content_for :sidebar do
+  render partial: 'edit/sidebar'
+end  %>
+<h1>Clear tree</h1>
+
+This action will completely erase all trees, setting the entire database back to an initial state.
+
+<%= form_tag action: :clear_tree_action, class: 'form-inline' do  %>
+<fieldset>
+	<label class="checkbox">Yes, I am sure I want to do this. <%= check_box_tag 'confirm' %></label>
+	<%= submit_tag "Clear!", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

@@ -2,5 +2,28 @@
 	 render partial: 'edit/sidebar'
 end  %>
 
-This is the edit page
+<div class="muted">
+	This page is the default 'we have just done an action, show what happened' page.
+</div>
 
+<% if flash[:sql] and !flash[:sql].empty? %>
+
+<h3>SQL Executed</h3>
+	<% flash[:sql].each do |sql| %>
+		<div>
+			<hr>
+			<pre><%=sql.sql.strip%></pre>
+			<% if sql.binds and !sql.binds.empty?%>
+			<strong>Bindings</strong><ol>
+			<% sql.binds.each do |bb| %>
+				<li><%=bb%></li>
+			<% end %>
+			</ol>
+			<% end %>
+			<% if sql.result %>
+			Rows: <%=sql.result%>, 
+			<% end %>
+			Time: <%=sql.ms%>ms
+		</div>
+<% end 
+end %>
