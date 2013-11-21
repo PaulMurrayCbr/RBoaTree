@@ -5,6 +5,12 @@ Rboatree::Application.routes.draw do
   get 'validation' => 'validate_data#index'
   get 'validate' => 'validate_data#validate'
 
+  get 'edit' => 'edit#index'
+  get 'edit/about' => 'edit#about'
+  get 'edit/create-tree' => 'edit#create_tree'
+  get 'edit/:id' => 'edit#index'
+
+
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

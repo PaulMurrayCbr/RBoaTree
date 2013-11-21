@@ -5,10 +5,19 @@ module MsgHelper
       @extra = extra
       @item = Hash.new
       @cssclass = 'default'
+      
     end
 
     def cssclass
       @cssclass
+    end
+    
+    def alertcss
+      if @cssclass == 'important'
+        return 'error'
+      else
+        return @cssclass
+      end
     end
 
     def msg
@@ -76,10 +85,14 @@ module MsgHelper
     end
 
     def add(msg = nil, extra = nil)
+      p msg
       if msg.class != Msg
         msg = Msg.new(msg, extra)
       end
+      p msg
+      p self
       self << msg
+      p self
       msg
     end
   end

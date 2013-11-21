@@ -1,10 +1,18 @@
 <% 
-if flash[:messages]
-  flash[:messages].each do | msg | %>
-    <div>
-    	<% render partial: 'layouts/msg', object: msg %>
+# this is dumb, and it's because I don't understand how erb gets done
+if flash[:message]
+  flash[:message].each do | msg |
+  %>
+    <div class="alert alert-<%= msg.alertcss %>">
+	  <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <% if msg.extra %>
+        <strong><%= msg.msg %></strong> <%= msg.extra %>
+      <% else %>
+        <%= msg.msg %>
+      <% end %>
+      <%= render partial: 'layouts/msglist', object: msg %>
     </div>
-<% 
+  <%
   end
 end
 %>

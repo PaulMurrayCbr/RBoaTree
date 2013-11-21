@@ -1,0 +1,31 @@
+<% content_for :sidebar do
+	 render partial: 'edit/sidebar'
+end  %>
+<h1>About editing</h1>
+
+<ul>
+	<li>
+		To begin, create a 'tree'. Add nodes to that tree (which will be in 'draft' mode). 'Apply' the nodes to the tree.
+	</li>
+	<li>
+		Then alter nodes that are in the tree - add new ones, delete existing ones.
+	</li>
+	<li>
+		Create more than one tree. Use nodes from one tree in another one.
+	</li>
+	<li>
+		Experiment with the link types - tracking, versioning, and fixed.
+	</li>
+	<li>
+		Try a complex merge.
+	</li>
+	<li>
+		Visit the <%= link_to "validation page", {controller: :validate_data, action: :index} %>, and see what invariants are always true of the data
+	</li>
+	<li>
+		Examine the nodes and see how they link. Try out the comparison tool.
+	</li>
+	<li>
+		Finally - examine the SQL and data structures to see the transformations that are performed.
+	</li>
+</ul>

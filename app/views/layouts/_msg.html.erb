@@ -1,34 +1,21 @@
 <div style="margin: 0">
-	<span class="badge badge-<%=msg.cssclass%>">&nbsp;</span>
+	<span class="badge badge-<%=msg.cssclass%>">&#x200B;</span>
 	<%
-	if msg.ok?
+	if msg.extra
 	%>
+		<strong><%= msg.msg%></strong> <%= msg.extra.inspect %>
 	<%
 	else
 	%>
-	<%
-	end
-	if msg.msg
-		if msg.extra
-	%>
-			<strong><%= msg.msg%></strong> <%= msg.extra.inspect %>
-	<%
-		else
-	%>
-			<%= msg.msg%>
+		<%= msg.msg%>
 <%
-		end
 	end
 %>
 <%
 if not msg.empty?
 %>
-	<% msg.each do |mm| %>
 	<div style="margin-top: 0; margin-bottom:0; margin-left: 2em; margin-right:0;">
-		<%= render partial: 'layouts/msg', object: mm %>
+		<%= render partial: 'layouts/msglist', object: msg %>
 	</div>
-	<% end %>
-<%
-end
-%>
+<% end %>	
 </div>
