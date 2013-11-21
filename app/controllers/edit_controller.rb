@@ -47,6 +47,15 @@ class EditController < ApplicationController
     redirect_to action: :index
   end
 
+  def create_workspace_form
+    setup_sidebar
+  end
+
+  def create_workspace_action
+    todo 'todo: create workspace action'
+    redirect_to action: :index
+  end
+
   private
 
   def setup_sidebar

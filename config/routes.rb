@@ -9,6 +9,8 @@ Rboatree::Application.routes.draw do
   get 'edit/about' => 'edit#about'
   get 'edit/create-tree-form' => 'edit#create_tree_form'
   post 'edit/create-tree-action' => 'edit#create_tree_action'
+  get 'edit/create-workspace-form' => 'edit#create_workspace_form'
+  post 'edit/create-workspace-action' => 'edit#create_workspace_action'
   get 'edit/clear-tree-form' => 'edit#clear_tree_form'
   post 'edit/clear-tree-action' => 'edit#clear_tree_action'
   get 'edit/:id' => 'edit#index'
