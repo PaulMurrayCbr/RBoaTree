@@ -9,6 +9,9 @@ gem 'rails', '4.0.0'
 # Postgres
 gem 'pg'
 
+# postgres stored procedure gem
+gem 'squirm'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
 

@@ -1,3 +1,4 @@
+
 =begin
 This class holds the SQL that performs transformations on the boatree data structure.
 The idea is that *All* transformations on the data are *only* done here. Ruby activerecord is not used anywhere
@@ -6,6 +7,7 @@ to write to the database.
 
 module BoatreeSql
   include FlashHelper
+  
   class SqlResult
     def initialize(sql, binds)
       @sql = sql
@@ -38,9 +40,22 @@ module BoatreeSql
       @binds
     end
   end
-
+  
   def boatree_test
-    info 'boatree test executed'
+    info "boatree test executed at #{Time::now}"
+    Squirm.use(ActiveRecord::Base.connection.raw_connection) do
+       sql = Squirm.procedure("testintfunc")
+       result = sql.call()
+       ok result.inspect
+       
+       sql = Squirm.procedure("testproc")
+       result = sql.call()
+       ok result.inspect
+       
+       sql = Squirm.procedure("testintfuncarg")
+       result = sql.call(6)
+       ok result.inspect
+    end
   end
 
   # clear the database, completely resetting it to an empty state
