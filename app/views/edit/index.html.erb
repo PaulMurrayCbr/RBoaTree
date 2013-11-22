@@ -8,26 +8,13 @@ end  %>
 
 <% if flash[:sql] and !flash[:sql].empty? %>
 	<h3>SQL Executed</h3>
-	<div class="container-fluid">
-		<% flash[:sql].each do |sql| %>
-			<div class="row-fluid">
-				<div class="span9">
-					<pre><%=sql.sql.strip%></pre>
-				</div>
-				<div class="span3">
-					<% if sql.binds and !sql.binds.empty?%>
-						<strong>Bindings</strong><ol>
-						<% sql.binds.each do |bb| %>
-							<li><tt><%=bb%></tt></li>
-						<% end %>
-						</ol>
-					<% end %>
-					<% if sql.result %>
-						Result: <%=sql.result%>, 
-					<% end %>
-					Time: <%=sql.ms%>ms
-				</div>
-			</div>
-		<% end %>
-	</div>
+	<table>
+		<tr><th style="padding: 0 1em;">Function</th><th style="padding: 0 1em;">Arguments</th><th style="padding: 0 1em;">Result</th><th style="padding: 0 1em;">Time (ms)</th></tr>
+	<% flash[:sql].each do |sql| %>
+		<tr><td style="padding: 0 1em;"><%=sql.sql.strip%></td>
+			<td style="padding: 0 1em;"><%=sql.binds%></td>
+			<td style="padding: 0 1em;"><%=sql.result%></td>
+			<td style="padding: 0 1em;"><%=sql.ms%></td></tr>
+	<% end %>
+	</table>
 <% end %>

@@ -22,3 +22,10 @@ end
 $$ 
 language plpgsql;
 
+create or replace function testexcep() returns void  as $$
+begin
+	raise exception 'this is a stored procedure exception';	
+end 
+$$ 
+language plpgsql;
+
