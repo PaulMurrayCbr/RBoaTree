@@ -6,15 +6,16 @@ class EditController < ApplicationController
   
   def index
     puts 'index action'
-
-    p flash
-
     setup_sidebar
   end
 
   def about
-    puts 'about action'
     setup_sidebar
+  end
+
+  def test
+    boatree_test
+    redirect_to action: :index
   end
 
   def clear_tree_form
@@ -37,12 +38,21 @@ class EditController < ApplicationController
   end
 
   def create_tree_action
+    valid = true
+    
     if !params['tree_name'] or params['tree_name'].blank?
       warn 'Specify a tree name'
-      return redirect_to action: :create_tree_form
+      valid = false
+    end
+    if !params['tree_uri'] or params['tree_uri'].blank?
+      warn 'Specify a uri'
+      valid = false
+    end
+    if !valid
+    return redirect_to action: :create_tree_form
     end
 
-    boatree_create_tree params['tree_name']
+    boatree_create_tree params['tree_name'], params["tree_uri"]
 
     redirect_to action: :index
   end

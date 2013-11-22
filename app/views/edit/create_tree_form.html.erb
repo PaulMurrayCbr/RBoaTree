@@ -26,7 +26,15 @@ end  %>
 
 <%= form_tag action: :create_tree_action, class: 'form-inline' do  %>
 <fieldset>
+	
+	<%= label_tag "Tree name" %>
 	<%= text_field_tag :tree_name %>
+    <span class="help-block">The tree name is simply some text naming the tree. It <u>should</u> be unique across the data, but this test app does not enforce this.</span>
+	<%= label_tag "Tree uri" %>
+	<%= text_field_tag :tree_uri %>
+    <span class="help-block">The tree uri is the persistent identifier of the tree. It <u>must</u> be unique across the dataset. It also should be something that is a valid uri, although again: this test app does not check that. </span>
 	<%= submit_tag "Create", class: 'btn btn-primary'%>
 </fieldset>
 <% end %>
+
+<%= params.inspect %>

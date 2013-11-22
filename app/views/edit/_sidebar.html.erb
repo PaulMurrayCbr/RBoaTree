@@ -1,5 +1,6 @@
 <ul  class="nav nav-list">
 	<li><%= link_to "About", {controller: :edit, action: :about} %></li>
+	<li><%= link_to "Test", {controller: :edit, action: :test} %></li>
 	<li><hr></li>
 	<% if defined? @currnode %>
 		<li><%= link_to "Node #{@currnode.id}", {controller: :edit, action: :index, id: @currnode.id} %></li>
@@ -7,5 +8,5 @@
 	<li><%= link_to "Create a tree", {controller: :edit, action: :create_tree_form} %></li>
 	<li><%= link_to "Create a workspace", {controller: :edit, action: :create_workspace_form} %></li>
 	<li><hr></li>
-	<li><%= link_to "Clear the tree", {controller: :edit, action: :clear_tree_form} %></li>
+	<li><%= link_to "Clear all data", {controller: :edit, action: :clear_tree_form} %></li>
 </ul>

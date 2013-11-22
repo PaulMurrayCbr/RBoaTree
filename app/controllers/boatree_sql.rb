@@ -39,6 +39,10 @@ module BoatreeSql
     end
   end
 
+  def boatree_test
+    info 'boatree test executed'
+  end
+
   # clear the database, completely resetting it to an empty state
   def boatree_clear
     t = Time.now
@@ -63,15 +67,14 @@ values (0, \'[END]\', 0, \'http://biodiversitry.org.au/boatree/structure#END\')'
     ok "Action sucessful. #{((Time.now - t) * 1000).to_i}ms"
   end
 
-  def boatree_create_tree(tree_name)
+  def boatree_create_tree(tree_name, tree_uri)
     t = Time.now
     msg = info 'Actions'
     ActiveRecord::Base.transaction do
       tree_id = ins('insert into tree(name) values ( $1 )', tree_name)
       msg.info "Created tree #{tree_id}, named \"#{tree_name}\""
       
-      tree_node = ins('insert into tree_node(name, tree_id) values ($1, $2)', tree_name, tree_id)
-      upd('update tree_node set uri=\'http://example.org/tree#\'||name where id=$1', tree_node)
+      tree_node = ins('insert into tree_node(name, tree_id, uri) values ($1, $2, $3)', tree_name, tree_id, tree_uri)
       msg.info "Created and finalised tree node #{tree_node}"
 
       root_node = ins('insert into tree_node(name, tree_id) values ($1, $2)', "#{tree_name} ROOT", tree_id)
