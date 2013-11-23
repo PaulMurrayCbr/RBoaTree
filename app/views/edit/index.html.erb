@@ -25,7 +25,13 @@ end  %>
 		else
 	%>
 			<tr>
-				<td style="padding: 0 1em;"><%= "#{sql.sql}(#{sql.binds.collect{|v| v.inspect}.join(', ')})" %></td>
+				<td style="padding: 0 1em;"><%= 
+					if sql.binds.empty?
+						sql.proc
+					else
+						"#{sql.proc}(#{sql.binds.collect{|v| v.inspect}.join(', ')})"
+					end
+				%></td>
 				<td style="padding: 0 1em;"><%= sql.result%></td>
 				<td style="padding: 0 1em;"><%= sql.ms%></td>
 			</tr>

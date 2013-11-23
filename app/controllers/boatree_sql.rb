@@ -7,8 +7,8 @@ to write to the database.
 module BoatreeSql
   include FlashHelper
   class SqlResult
-    def initialize(sql, binds)
-      @sql = sql
+    def initialize(proc, binds)
+      @proc = proc.to_sym
       @ms = 0
       @binds = binds
       @result = nil
@@ -56,8 +56,8 @@ module BoatreeSql
       @exception
     end
 
-    def sql
-      @sql
+    def proc
+      @proc
     end
 
     def binds
@@ -66,22 +66,22 @@ module BoatreeSql
   end
 
   def boatree_test
-    info "boatree test executed at #{Time::now}"
-    begin
+    db_perform do
       flash_sql << 'Some tests'
-      ok call("testproc")
-      ok call("testintfunc")
-      ok call("testintfuncarg", 6)
+      db_call :testproc 
+      db_call :testintfunc 
+      db_call :testintfuncarg, 6 
       flash_sql << 'this next one should fail'
-      ok call("testexcep")
-    rescue Exception => e
-      error e.to_s
+      db_call :testexcep
     end
   end
 
+
   # clear the database, completely resetting it to an empty state
   def boatree_clear
-    call("boatree_reset")
+    db_perform do
+      db_call "boatree_reset"
+    end
   end
 
   def boatree_create_tree(tree_name, tree_uri)
@@ -105,7 +105,20 @@ module BoatreeSql
     ok "Action sucessful. #{((Time.now - t) * 1000).to_i}ms"
   end
 
-  def call(proc, *args)
+  def db_perform(&block)
+    t = Time.now
+    begin
+      ActiveRecord::Base.transaction do
+        block.call
+      end
+    rescue Exception => e
+      error e.to_s
+    ensure
+      info 'Time:', "#{((Time.now - t) * 1000).to_i}ms"
+    end
+  end
+
+  def db_call(proc, *args)
     r = SqlResult.new(proc, args)
     flash_sql << r
     t = Time.now
