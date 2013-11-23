@@ -1,5 +1,6 @@
 class ValidateDataController < ApplicationController
   include MsgHelper
+  include BoatreeSql
   
   def index
     puts __FILE__, __LINE__
@@ -11,13 +12,6 @@ class ValidateDataController < ApplicationController
 
     @results = Msg.new
 
-    test_tables_ok
-
-  end
-
-  private 
-
-  def test_tables_ok
     msg = @results.add('self check')
     msg.add 'default'
     msg.ok 'ok'
@@ -28,7 +22,11 @@ class ValidateDataController < ApplicationController
     tt(msg, 'Tree exists') { Tree.count }
     tt(msg, 'TreeNode exists') { TreeNode.count }
     tt(msg, 'TreeLink exists') { TreeLink.count }
-    msg = @results.add('check end node')
+    msg = @results.add('database integrity checks')
+    check msg, :boatree_validate_no_op
+    check msg, :boatree_validate_error
+    check msg, :boatree_validate_end_node
+    msg = @results.add('TO BE REMOVED')
     tt(msg, 'There should be a END tree') { Tree.find(0) }
     tt(msg, 'There should be a END node') { TreeNode.find(0) }
     ttt(msg, 'The node of the end tree should be the end node') { Tree.find(0).node == TreeNode.find(0) }
@@ -45,6 +43,17 @@ class ValidateDataController < ApplicationController
       msg.ok(t, r)
     rescue  Exception => e
       msg.error(t, e)
+    end
+  end
+
+  def check(msg, test_name)
+    begin
+      db_raw_call test_name
+      msg.ok test_name
+    rescue PG::RaiseException => e
+      msg.warn test_name, e.message.strip
+    rescue Exception => e
+      msg.error test_name, e.to_s
     end
   end
 

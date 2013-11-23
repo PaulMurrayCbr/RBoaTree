@@ -2,7 +2,7 @@ require 'boatree_sql'
 
 class EditController < ApplicationController
   include FlashHelper
-  include BoatreeSql
+  include BoatreeOperations
   
   def index
     setup_sidebar
