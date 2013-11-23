@@ -68,9 +68,11 @@ module BoatreeSql
   def boatree_test
     info "boatree test executed at #{Time::now}"
     begin
+      flash_sql << 'Some tests'
       ok call("testproc")
       ok call("testintfunc")
       ok call("testintfuncarg", 6)
+      flash_sql << 'this next one should fail'
       ok call("testexcep")
     rescue Exception => e
       error e.to_s

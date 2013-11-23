@@ -5,7 +5,6 @@ class EditController < ApplicationController
   include BoatreeSql
   
   def index
-    puts 'index action'
     setup_sidebar
   end
 

@@ -14,12 +14,24 @@ end  %>
 		<th style="padding: 0 1em;">Result</th>
 		<th style="padding: 0 1em;">Time (ms)</th>
 	</tr>
-	<% flash[:sql].each do |sql| %>
-		<tr>
-			<td style="padding: 0 1em;"><%= "#{sql.sql.strip}(#{sql.binds.collect{|v| v.inspect}.join(', ')})" %></td>
-			<td style="padding: 0 1em;"><%= sql.result%></td>
-			<td style="padding: 0 1em;"><%= sql.ms%></td>
-		</tr>
-	<% end %>
+	<% 
+	flash[:sql].each do |sql| 
+		if sql.is_a? String
+	%>
+			<tr>
+				<td style="padding: 0 1em;" colspan="3"><b><u><%= sql %></u></b></td>
+			</tr>
+	<% 
+		else
+	%>
+			<tr>
+				<td style="padding: 0 1em;"><%= "#{sql.sql}(#{sql.binds.collect{|v| v.inspect}.join(', ')})" %></td>
+				<td style="padding: 0 1em;"><%= sql.result%></td>
+				<td style="padding: 0 1em;"><%= sql.ms%></td>
+			</tr>
+	<% 
+		end 
+	end
+	%>
 </table>
 <% end %>
