@@ -2,17 +2,30 @@
 	 render partial: 'edit/sidebar'
 end  %>
 <h1>About editing</h1>
-
-<ul>
+<p>You will start with a completely blank data set. No trees or nodes except for the 'end' tree and 'end' node.</p>
+<ol>
 	<li>
-		To begin, create a 'tree'. Add nodes to that tree (which will be in 'draft' mode). 'Apply' the nodes to the tree.
+		To begin, create a 'tree' and create a 'workspace'.
 	</li>
 	<li>
-		Then alter nodes that are in the tree - add new ones, delete existing ones.
+		Edit the workspace. Begin by 'attaching' the currently empty root node of the tree to your workspace.		
 	</li>
 	<li>
-		Create more than one tree. Use nodes from one tree in another one.
+		'Check out' the tree root node <em>in the context of youe workspace</em>. This will create a new draft node in the workspace.
 	</li>
+	<li>
+		Edit that draft node. Add other draft nodes, move them about, delete them. Even atach nodes from other trees that you have already created.
+	</li>
+	<li>
+		Finalize the root draft node - the one that was originally a copy of the root tree node.
+	</li>
+	<li>
+		Apply that new root node. This will move it into the original tree, and trigger a new version of your tree.
+	</li>
+</ol>
+	<p>Other things to do are:</p>
+	
+<ul>	
 	<li>
 		Experiment with the link types - tracking, versioning, and fixed.
 	</li>
@@ -29,3 +42,15 @@ end  %>
 		Finally - examine the SQL and data structures to see the transformations that are performed.
 	</li>
 </ul>
+
+<div>
+<p>
+	<b>Please note:</b> this is a test app, and the primary things being tested are the underlying database transformations. This means that this 
+	webapp will permit you to try to do things that the underlying database will refuse to do. This is normal. A real implementation
+	of these algorithms would not present those options to you in the first place, but here we are testing that these operations are correctly
+	rejected at the database layer. 
+</p>
+<p>
+	When this happens, you <em>should</em> get a more-or-less meaningful error message and be sent to an appropriate web page.
+</p>
+</div>

@@ -1,7 +1,6 @@
 =begin
-This class holds the SQL that performs transformations on the boatree data structure.
-The idea is that *All* transformations on the data are *only* done here. Ruby activerecord is not used anywhere
-to write to the database.
+ This class holds methods for running stored procedures in postgres, with helpers to build state for our
+ views. Its methods throw up flash messages and append to the flash[:sql] log.
 =end
 
 module BoatreeSql
@@ -65,7 +64,7 @@ module BoatreeSql
     end
   end
 
-  # clear the database, completely resetting it to an empty state
+  # perform a block inside a transaction
 
   def db_perform(&block)
     t = Time.now
@@ -75,11 +74,23 @@ module BoatreeSql
       end
     rescue Exception => e
       error e.to_s
-      return nil
+      raise e
     ensure
       info 'Time:', "#{((Time.now - t) * 1000).to_i}ms"
     end
   end
+
+  # perform a block inside a transaction, return nil if there is an exception
+
+  def db_perform_discard_exception(&block)
+    begin
+      return db_perform &block
+    rescue
+      return nil
+    end
+  end
+
+  # call an sql stored procedure, adding a result to flash_sql for the sql_results partial
 
   def db_call(proc, *args)
     r = SqlResult.new(proc, args)
@@ -99,12 +110,25 @@ module BoatreeSql
     end
 
     r.ms = ((Time.now - t) * 1000).to_i
+    
     if r.ok?
       return r.result
     else
       raise r.result
     end
   end
+  
+  # call an sql stored procedure, adding a result to flash_sql for the sql_results partial
+  # if an exception occurs, ignore it and return nil
+  def db_call_discard_exception(proc, *args)
+    begin
+      return db_call(proc, *args)
+    rescue
+      return nil
+    end
+  end
+
+  # call an sql stored procedure, no wrapping or exception handling
 
   def db_raw_call(proc, *args)
     Squirm.use(ActiveRecord::Base.connection.raw_connection) do
@@ -112,6 +136,8 @@ module BoatreeSql
       return sql.call(*args)
     end
   end
+
+  # get or create flash[:sql] for the sql_results partial
 
   def flash_sql
     flash[:sql] = Array.new unless flash[:sql]

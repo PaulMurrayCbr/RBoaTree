@@ -32,7 +32,11 @@ class EditController < ApplicationController
       return redirect_to action: :clear_tree_form
     end
 
-    boatree_clear
+    begin
+      boatree_clear
+    rescue
+      return redirect_to action: :clear_tree_form
+    end
 
     redirect_to action: :index
   end
@@ -56,14 +60,18 @@ class EditController < ApplicationController
     end
     
     if !valid
-    return redirect_to action: :create_tree_form
+      return redirect_to action: :create_tree_form
     end
 
-    tree_id = boatree_create_tree params['tree_name'], params["tree_uri"]
+    begin
+      tree_id = boatree_create_tree params['tree_name'], params["tree_uri"]
+    rescue
+      return redirect_to action: :create_tree_form
+    end
 
     puts "Tree id is #{tree_id}"
 
-    redirect_to action: :tree, id: tree_id
+    redirect_to controller: :tree, action: :tree, id: tree_id
   end
 
   def create_workspace_form
@@ -83,9 +91,17 @@ class EditController < ApplicationController
       return redirect_to action: :create_workspace_form
     end
 
-    tree_id = boatree_create_workspace params['workspace_name']
+    begin
+      workspace_id = boatree_create_workspace params['workspace_name']
+    rescue
+      return redirect_to action: :create_workspace_form
+    end
     
-    redirect_to action: :tree, id: tree_id
+    if !workspace_id
+      return redirect_to action: :create_workspace_form
+    end
+
+    redirect_to controller: :workspace, action: :tree, id: workspace_id
   end
 
   def list_trees

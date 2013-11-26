@@ -5,13 +5,21 @@ end  %>
 <h1>Trees in data set</h1>
 
 <% if @list.empty? %>
-<div class="muted">No trees in dataset.</div>
+<div class="muted">
+	No trees in dataset.
+</div>
 <% else %>
-	<table><tr><th>Tree</th><th>Node</th></tr>
+<table>
+	<tr>
+		<th>Tree</th><th>Tree node</th><th>Current root node</th>
+	</tr>
 	<% @list.each do |t| %>
-		<tr><td style="padding: 0 1em;"><%=link_to t.name, controller: :tree, action: :tree, id: t.id %></td><td  style="padding: 0 1em;"><%=link_to t.node.uri, controller: :node, action: :node, id: t.node.id %></td></tr>
+	<tr>
+		<td style="padding: 0 1em;"><%= link_to t.name, controller: :tree, action: :tree, id: t.id %></td>
+		<td  style="padding: 0 1em;"><%= link_to t.node.uri, controller: :node, action: :node, id: t.node.id %></td>
+	</tr>
 	<% end %>
-	</table> 
+</table>
 <% end %>
 
 <%= render partial: "edit/sql_results" %>
