@@ -43,10 +43,12 @@ class EditController < ApplicationController
       warn 'Specify a tree name'
       valid = false
     end
+    
     if !params['tree_uri'] or params['tree_uri'].blank?
       warn 'Specify a uri'
       valid = false
     end
+    
     if !valid
     return redirect_to action: :create_tree_form
     end
@@ -61,7 +63,19 @@ class EditController < ApplicationController
   end
 
   def create_workspace_action
-    todo 'todo: create workspace action'
+    valid = true
+    
+    if !params['workspace_name'] or params['workspace_name'].blank?
+      warn 'Specify a workspace name'
+      valid = false
+    end
+
+    if !valid
+    return redirect_to action: :create_tree_form
+    end
+
+    boatree_create_workspace params['workspace_name']
+
     redirect_to action: :index
   end
 

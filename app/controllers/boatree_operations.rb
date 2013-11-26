@@ -1,5 +1,6 @@
 module BoatreeOperations
   include BoatreeSql
+  include FlashHelper
   
   def boatree_test
     db_perform do
@@ -15,17 +16,21 @@ module BoatreeOperations
   def boatree_clear
     db_perform do
       db_call :boatree_reset
+      ok "All data cleared, database reset"
     end
   end
 
   def boatree_create_tree(tree_name, tree_uri)
     db_perform do
-      tree_id = db_call :boatree_create_tree, tree_name
-      tree_node = db_call :boatree_create_tree_node, tree_id, "#{tree_name} [TOP NODE]"
-      root_node = db_call :boatree_create_node, tree_id, "#{tree_name} [ROOT]"
-      db_call :boatree_adopt_node_tracking, tree_node, root_node
-      db_call :boatree_finalise_node_recursive, root_node
-      db_call :boatree_finalise_node_uri, tree_node, tree_uri
+      tree_id = db_call :boatree_create_tree, tree_name, tree_uri
+      ok "Tree #{tree_name} created with uri #{tree_uri}"
+    end
+  end
+    
+  def boatree_create_workspace(workspace_name)
+    db_perform do
+      tree_id = db_call :boatree_create_workspace, workspace_name
+      ok "Workspace #{workspace_name} created"
     end
   end
     

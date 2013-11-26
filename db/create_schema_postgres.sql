@@ -32,14 +32,15 @@ CREATE TABLE tree_node
   -- boatree columns
   name character varying(255),
   tree_id integer references tree not null,
-  uri  character varying(255) unique
+  uri  character varying(255) unique,
+  published boolean not null default false
 )
 WITH (
   OIDS=FALSE
 );
 
-alter table tree add column root_node_id integer references tree_node;
-comment on column tree.root_node_id is 'This should be not null, but it is nullable owing to the sequence involved in creating a new tree and its root node.';
+alter table tree add column tree_node_id integer references tree_node;
+comment on column tree.tree_node_id is 'This should be not null, but it is nullable owing to the sequence involved in creating a new tree and its tree node.';
 
 alter table tree_node add column prev_node_id integer references tree_node;
 alter table tree_node add column next_node_id integer references tree_node;
@@ -47,7 +48,7 @@ alter table tree_node add column next_node_id integer references tree_node;
 -- create the end node. global across all graphs that make use of this structure and ontology
 insert into tree(id, name, tree_type) values (0, '[END]', 'E');
 insert into tree_node(id, name, tree_id, uri) values (0, '[END]', 0, 'http://biodiversitry.org.au/boatree/structure#END');
-update tree set root_node_id = 0 where id = 0;
+update tree set tree_node_id = 0 where id = 0;
 
 comment on column tree_node.uri is 'Assigned persistent uri. If this column is null, then the node is a draft node.';
 
