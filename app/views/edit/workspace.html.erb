@@ -1,0 +1,11 @@
+<% content_for :sidebar_extra_actions do %>
+  <li>extra edit for workspace</li>
+<% end %>  
+
+<% content_for :sidebar do
+  render partial: 'edit/sidebar'
+end  %>
+
+TODO: Display workspace <%= @ws %>
+
+<%= render partial: "edit/sql_results" %>

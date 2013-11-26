@@ -1,0 +1,17 @@
+<% content_for :sidebar do
+  render partial: 'edit/sidebar'
+end  %>
+
+<h1>Trees in data set</h1>
+
+<% if @list.empty? %>
+<div class="muted">No trees in dataset.</div>
+<% else %>
+	<table><tr><th>Tree</th><th>Node</th></tr>
+	<% @list.each do |t| %>
+		<tr><td style="padding: 0 1em;"><%=link_to t.name, action: :tree, id: t.id %></td><td  style="padding: 0 1em;"><%=link_to t.node.uri, action: :node, id: t.node.id %></td></tr>
+	<% end %>
+	</table> 
+<% end %>
+
+<%= render partial: "edit/sql_results" %>

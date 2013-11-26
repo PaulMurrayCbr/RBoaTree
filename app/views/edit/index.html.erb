@@ -2,12 +2,8 @@
   render partial: 'edit/sidebar'
 end  %>
 
-<div class="muted">
-	This page is the default 'we have just done an action, show what happened' page.
+<div>
+	Select an action from the sidebar.
 </div>
 
-<% if flash[:sql] and !flash[:sql].empty? %>
-
-<h3>Operations</h3>
 <%= render partial: "edit/sql_results" %>
-<% end %>

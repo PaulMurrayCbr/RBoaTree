@@ -17,6 +17,7 @@ module BoatreeOperations
     db_perform do
       db_call :boatree_reset
       ok "All data cleared, database reset"
+      nil
     end
   end
 
@@ -24,6 +25,7 @@ module BoatreeOperations
     db_perform do
       tree_id = db_call :boatree_create_tree, tree_name, tree_uri
       ok "Tree #{tree_name} created with uri #{tree_uri}"
+      tree_id
     end
   end
     
@@ -31,6 +33,7 @@ module BoatreeOperations
     db_perform do
       tree_id = db_call :boatree_create_workspace, workspace_name
       ok "Workspace #{workspace_name} created"
+      tree_id
     end
   end
     

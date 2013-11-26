@@ -1,0 +1,18 @@
+<% content_for :sidebar do
+  render partial: 'edit/sidebar'
+end  %>
+
+<h1>Workspaces in data set</h1>
+
+<% if @list.empty? %>
+<div class="muted">No workspaces in dataset.</div>
+<% else %>
+	<table><tr><th>Workspace</th></tr>
+	<% @list.each do |t| %>
+		<tr><td style="padding: 0 1em;"><%=link_to t.name, action: :workspace, id: t.id %></td></tr>
+	<% end %>
+	</table> 
+<% end %>
+
+
+<%= render partial: "edit/sql_results" %>

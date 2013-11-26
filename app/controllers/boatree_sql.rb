@@ -71,10 +71,11 @@ module BoatreeSql
     t = Time.now
     begin
       ActiveRecord::Base.transaction do
-        block.call
+        return block.call
       end
     rescue Exception => e
       error e.to_s
+      return nil
     ensure
       info 'Time:', "#{((Time.now - t) * 1000).to_i}ms"
     end

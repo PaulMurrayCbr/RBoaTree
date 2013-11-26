@@ -1,3 +1,7 @@
+<% if flash[:sql] and !flash[:sql].empty? %>
+
+<h3>Operations</h3>
+
 <table>
 	<tr>
 		<th style="padding: 0 1em;">Operation</th>
@@ -30,3 +34,5 @@
 	end
 	%>
 </table>
+
+<% end %>
