@@ -3,6 +3,7 @@ require 'boatree_sql'
 class EditController < ApplicationController
   include FlashHelper
   include BoatreeOperations
+  include ParamHelper
   
   def index
     setup_sidebar
@@ -11,114 +12,6 @@ class EditController < ApplicationController
 
   def about
     setup_sidebar
-    flash.discard
-  end
-
-  # I'm taken aback that ruby doesn't have a kernel method to do this
-  def to_int(s)
-    begin
-      return Integer(s)
-    rescue
-      return nil
-    end
-  end
-  
-  def tree
-    setup_sidebar
-    
-    if !params[:id]
-      warn "No id specified"
-      redirect_to action: :index
-      return
-    end
- 
-    id = to_int(params[:id])
-
-    if id.nil?
-      warn "\"#{params[:id]}\" is not a number"
-      redirect_to action: :index
-      return
-    end
- 
-    begin
-      @t = Tree.find(id)
-    rescue ActiveRecord::RecordNotFound
-      warn "Tree #{id} not found"
-      redirect_to action: :index
-      return
-    end 
-    
-    if !@t.tree?
-      warn "Tree #{id} is a workspace"      
-      redirect_to action: :workspace, id: id
-      return
-    end
-  
-    todo "tree"
-    flash.discard
-  end
-
-  def workspace
-    setup_sidebar
-    
-    if !params[:id]
-      warn "No id specified"
-      redirect_to action: :index
-      return
-    end
- 
-    id = to_int(params[:id])
-
-    if id.nil?
-      warn "\"#{params[:id]}\" is not a number"
-      redirect_to action: :index
-      return
-    end
- 
-    begin
-      @ws = Tree.find(id)
-    rescue ActiveRecord::RecordNotFound
-      warn "Tree #{id} not found"
-      redirect_to action: :index
-      return
-    end 
-    
-    if !@ws.workspace?
-      warn "Tree #{id} is a tree"      
-      redirect_to action: :tree, id: id
-      return
-    end
-  
-    todo "workspace"
-    flash.discard
-  end
-
-  def node
-    setup_sidebar
-    
-    if !params[:id]
-      warn "No id specified"
-      redirect_to action: :index
-      return
-    end
- 
-    id = to_int(params[:id])
-
-    if id.nil?
-      warn "\"#{params[:id]}\" is not a number"
-      redirect_to action: :index
-      return
-    end
- 
-    begin
-      @n = TreeNode.find(id)
-    rescue ActiveRecord::RecordNotFound
-      warn "Node #{id} not found"
-      redirect_to action: :index
-      return
-    end 
-    
-    todo "node"
     flash.discard
   end
 

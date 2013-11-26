@@ -9,7 +9,7 @@ end  %>
 <% else %>
 	<table><tr><th>Workspace</th></tr>
 	<% @list.each do |t| %>
-		<tr><td style="padding: 0 1em;"><%=link_to t.name, action: :workspace, id: t.id %></td></tr>
+		<tr><td style="padding: 0 1em;"><%=link_to t.name, controller: :workspace, action: :workspace, id: t.id %></td></tr>
 	<% end %>
 	</table> 
 <% end %>

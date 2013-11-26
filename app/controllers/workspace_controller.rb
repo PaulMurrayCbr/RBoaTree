@@ -1,0 +1,48 @@
+require 'boatree_sql'
+
+class WorkspaceController < ApplicationController
+  include FlashHelper
+  include BoatreeOperations
+  include ParamHelper
+  
+  def workspace
+    setup_sidebar
+    
+    if !params[:id]
+      warn "No id specified"
+      redirect_to action: :index
+      return
+    end
+ 
+    id = to_int(params[:id])
+
+    if id.nil?
+      warn "\"#{params[:id]}\" is not a number"
+      redirect_to action: :index
+      return
+    end
+ 
+    begin
+      @ws = Tree.find(id)
+    rescue ActiveRecord::RecordNotFound
+      warn "Tree #{id} not found"
+      redirect_to action: :index
+      return
+    end 
+    
+    if !@ws.workspace?
+      warn "Tree #{id} is a tree"      
+      redirect_to action: :tree, id: id
+      return
+    end
+  
+    todo "workspace"
+    flash.discard
+  end
+  
+  private
+  
+  def setup_sidebar
+    
+  end
+end
