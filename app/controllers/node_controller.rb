@@ -28,6 +28,24 @@ class NodeController < ApplicationController
     return
     end
 
+    # ok. work out the tree placements.
+    # we have a hash of the trees of the supernodes -> a list of -> a hash of { tree_link, placements[] }
+
+    @placements = Hash.new
+
+    @n.supernode_link.each do |l|
+      nugget = NodeController::Placement.new(l)
+
+      if !@placements[l.supernode.tree]
+        @placements[l.supernode.tree] = Array.new
+      end
+      @placements[l.supernode.tree] << nugget
+
+      if l.supernode.current?
+        todo 'find placements'
+      end
+    end
+
     setup_sidebar
 
     flash.discard
@@ -38,4 +56,24 @@ class NodeController < ApplicationController
   def setup_sidebar
 
   end
+
+  class Placement
+    def initialize(link)
+      @link = link
+      @placements = Array.new
+    end
+
+    def link
+      @link
+    end
+
+    def supernode
+      @link.supernode
+    end
+
+    def placements
+      @placements
+    end
+  end
+
 end

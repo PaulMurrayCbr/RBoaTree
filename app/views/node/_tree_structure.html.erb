@@ -1,0 +1,17 @@
+<% if defined? node %>
+	<div class='node-tree-structure-block'>
+		<div class='node-tree-structure-node'>
+			<% if defined? link %>
+				<span class="<%=link_css(link)%>"><%= render inline: link_symbol(link)%></span>
+			<% end %>
+			<%= render partial: 'node/node', locals: { node: node } %>
+		</div>
+		<% if depth > 0 && node && !node.subnode_link.empty?%>	
+			<div class='node-tree-structure-subnodes'>
+				<% node.subnode_link.each do | l | %>
+					<%= render partial: 'node/tree_structure', locals: { depth: depth-1, link: l, node: l.subnode } %>
+				<% end %>
+			</div>
+		<% end %>
+	</div>
+<% end %>

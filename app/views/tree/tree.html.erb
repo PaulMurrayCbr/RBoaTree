@@ -25,7 +25,7 @@ end  %>
 	%>
 			<tr><td><%=nn.created_at%></td><td><%= render partial:'node/node', object:nn %></td></tr>
 	<%
-			nn = nn.prev
+			nn = nn.copy_of
 		end
 		
 	%>

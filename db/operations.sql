@@ -68,7 +68,7 @@ begin
   		tree_id,
   		uri
   	)
-  	values(_ts, _ts, _name, _tree_id, _uri)
+  	values(_ts, _ts, _name || ' [TOP]', _tree_id, _uri)
   	returning id into _tree_node_id;
   	
   	insert into tree_node (

@@ -84,9 +84,74 @@
 	</p>
 </div>
 
-<div>TODO - display this tree</div> 
-<div>TODO - list all places where this node is attached. show if that's in a tree, if this node is current there, if that's in  workspce - link to 'checkout''</div>
-<div>TODO - all prev and next nodes, noting if it's a version/branch/merge/current draft</div>
-<div>TODO - show version history, with liks to comparison tool.</div>
+<div>
+	<h3>Node usage</h3>
+	<% @placements.each do | k, v | %>
+		<div>
+			<% v.each do | nugget | %>
+				<div>
+					<%= render partial: 'node/node', locals: { node: nugget.supernode } %>
+					<span class="<%=link_css(nugget.link)%>"><%= render inline: link_symbol(nugget.link) %></span>
+					<% if nugget.supernode.current? && !nugget.placements.empty? %>
+						in
+						<% nugget.placements.each do |t| %>
+							<span class="<%=tree_css(t)%>"><%=t.name%></span> <%= link_to "[#{t.id}]", controller: :tree, action: :tree, id: t.id %></span>
+						<% end %>
+					<% end %>
+				</div>
+			<% end %>
+		</div>
+	<% end %>
+	
+</div>
+<div>
+	<h3>Tree structure</h3>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span1" style="font-size: 80%;">
+				<h5>Older versions</h5>
+				<%
+					nn = @n.copy_of
+					nn = nn.copy_of if nn
+					while nn
+						
+				%>
+						<div><%= render partial:'node/node', object:nn %></div>
+				<%
+						nn = nn.copy_of
+					end
+					
+				%>
+			</div>				
+			<div class="span3">
+				<h5>Previous version</h5>
+	<%= render partial: 'node/tree_structure', locals: {node: @n.copy_of, depth: 2}%>
+			</div>
+			<div class="span4">
+				<h5>This version</h5>
+	<%= render partial: 'node/tree_structure', locals: {node: @n, depth: 2}%>
+			</div>
+			<div class="span3">
+				<h5>Replacement version</h5>
+	<%= render partial: 'node/tree_structure', locals: {node: @n.replacement, depth: 2}%>
+			</div>
+			<div class="span1" style="font-size: 80%;">
+				<h5>Later versions</h5>
+				<%
+					nn = @n.replacement
+					nn = nn.replacement if nn
+					while nn
+						
+				%>
+						<div><%= render partial:'node/node', object:nn %></div>
+				<%
+						nn = nn.replacement
+					end
+					
+				%>
+			</div>				
+		</div>
+	</div>
+</div>
 
 <%= render partial: "edit/sql_results" %>
