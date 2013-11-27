@@ -9,3 +9,8 @@
 .node-unpublished {  }
 
 .node-replaced { text-decoration: strikethrough; }
+
+.tree-nil { font-weight: bold; color: darkgray; }
+.tree-workspace { color: darkred; }
+.tree-tree {  }
+

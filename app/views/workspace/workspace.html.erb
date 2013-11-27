@@ -6,13 +6,18 @@
   render partial: 'edit/sidebar'
 end  %>
 
-<h1>Workspace: <%=@ws.name%></h1>
+<h1>Workspace: <span class="<%=tree_css(@ws)%>"><%=@ws.name%></span></h1>
+
+<% if @ws.node.subnode_link.empty? %>
+	<div class="muted">This workspace is empty.</div>
+<% end %>
 
 <div>
 <p>
 	To add or remove items from the workspace, add or remove items from its <%= link_to 'top node', controller: :node, action: :node, id: @ws.node.id %>.
 </p>
 </div>
+
 
 <%= render partial: "node/links", object:  @ws.node.subnode_link %>
 

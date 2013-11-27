@@ -7,11 +7,11 @@ end  %>
 <% if @list.empty? %>
 <div class="muted">No workspaces in dataset.</div>
 <% else %>
-	<table><tr><th>Workspace</th></tr>
 	<% @list.each do |t| %>
-		<tr><td style="padding: 0 1em;"><%=link_to t.name, controller: :workspace, action: :workspace, id: t.id %></td></tr>
+	<li>
+		<span class="<%=tree_css(t)%>"><%=t.name%></span> <%= link_to "[#{t.id}]", controller: :workspace, action: :workspace, id: t.id %></span>
+	</li>
 	<% end %>
-	</table> 
 <% end %>
 
 

@@ -1,46 +1,5 @@
-<% 
-	if not defined? node || !node 
-		render inline: '<span class="node node-nil">--NIL--</span>'
-	else
-		css = 'node'
-		
-		if node.published?
-			css << ' node-published'
-		else
-			css << ' node-unpublished'
-		end
-		
-		if node.draft?
-			css << ' node-draft'
-		else
-			css << ' node-final'
-		end
-		
-		if node.next
-			css <<' node-replaced'
-		else
-			css << ' node-current'
-		end
+<span class='<%=node_css(node)%>'><%=node.name%></span>/<span class='<%=tree_css(node.tree)%>'><%=node.tree.name%></span>
 
-		# importnat stuff coes at the end, to override
-			
-		if node.end?
-			css << ' node-end'
-		end
-		
-		if node.root_of && node.root_of.workspace?
-			css << ' node-workspace-top'
-		end
-		
-		if node.root_of && node.root_of.tree?
-			css << ' node-tree-top'
-		end
-%>	
-	<span class='<%=css%>'><%=node.name%></span>/<%=node.tree.name%>
-	
-	<%= link_to "&larr;", controller: :node, action: :node, id: node.prev.id if node.prev %>
-	<%= link_to "[#{node.id}]", controller: :node, action: :node, id: node.id%>
-	<%= link_to "&rarr;", controller: :node, action: :node, id: node.next.id if node.next %>
-<%
-	end
-%>
+<%= link_to "&larr;", controller: :node, action: :node, id: node.prev.id if node.prev %>
+<%= link_to "[#{node.id}]", controller: :node, action: :node, id: node.id%>
+<%= link_to "&rarr;", controller: :node, action: :node, id: node.next.id if node.next %>
