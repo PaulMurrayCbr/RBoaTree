@@ -42,7 +42,11 @@ class NodeController < ApplicationController
       @placements[l.supernode.tree] << nugget
 
       if l.supernode.current?
-        todo 'find placements'
+        sql = "SELECT * from get_tree_placements(#{l.supernode.id})"
+        @result = ActiveRecord::Base.connection.execute(sql);
+        @result.each do |row| 
+          nugget.placements << Tree.find(row['tree_id']) 
+        end
       end
     end
 
