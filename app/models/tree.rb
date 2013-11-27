@@ -12,11 +12,11 @@ class Tree < ActiveRecord::Base
   end
     
   def tree?
-    ! node.uri.nil?
+    tree_type == 'T'
   end  
     
   def workspace?
-    node.uri.nil?
+    tree_type == 'W'
   end  
     
   def end?

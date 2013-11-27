@@ -101,7 +101,7 @@ class EditController < ApplicationController
       return redirect_to action: :create_workspace_form
     end
 
-    redirect_to controller: :workspace, action: :tree, id: workspace_id
+    redirect_to controller: :workspace, action: :workspace, id: workspace_id
   end
 
   def list_trees

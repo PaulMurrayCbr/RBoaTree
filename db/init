@@ -1,0 +1,6 @@
+#!/bin/bash
+
+./init_schema_postgres
+./init_integrity_checks
+./init_operations
+./init_test

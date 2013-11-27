@@ -18,7 +18,7 @@ class WorkspaceController < ApplicationController
 
     if id.nil?
       warn "\"#{params[:id]}\" is not a number"
-      redirect_to action: :index
+      redirect_to controller: :edit, action: :index
       return
     end
  
@@ -26,13 +26,19 @@ class WorkspaceController < ApplicationController
       @ws = Tree.find(id)
     rescue ActiveRecord::RecordNotFound
       warn "Tree #{id} not found"
-      redirect_to action: :index
+      redirect_to controller: :edit, action: :index
       return
     end 
     
-    if !@ws.workspace?
+    if @ws.end?
+      warn "Tree #{id} is the end tree"      
+      redirect_to controller: :edit, action: :index
+      return
+    end
+  
+    if @ws.tree?
       warn "Tree #{id} is a tree"      
-      redirect_to action: :tree, id: id
+      redirect_to controller: :tree, action: :tree, id: id
       return
     end
   

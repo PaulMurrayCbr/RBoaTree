@@ -39,7 +39,7 @@ WITH (
   OIDS=FALSE
 );
 
-alter table tree add column tree_node_id integer references tree_node;
+alter table tree add column tree_node_id integer references tree_node unique;
 comment on column tree.tree_node_id is 'This should be not null, but it is nullable owing to the sequence involved in creating a new tree and its tree node.';
 
 alter table tree_node add column prev_node_id integer references tree_node;

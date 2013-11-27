@@ -30,9 +30,15 @@ class TreeController < ApplicationController
       return
     end 
     
-    if !@t.tree?
+    if @t.end?
+      warn "Tree #{id} is the end tree"      
+      redirect_to controller: :edit, action: :index
+      return
+    end
+  
+    if @t.workspace?
       warn "Tree #{id} is a workspace"      
-      redirect_to action: :workspace, id: id
+      redirect_to controller: :workspace, action: :workspace, id: id
       return
     end
   
