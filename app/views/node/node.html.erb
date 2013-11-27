@@ -13,6 +13,6 @@
   render partial: 'edit/sidebar'
 end %>  
 	
-TODO: Display node <%= @n %>
+<h1>Node <%= render partial: "node/node", object: @n%></h1>
 
 <%= render partial: "edit/sql_results" %>

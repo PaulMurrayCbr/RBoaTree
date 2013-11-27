@@ -1,12 +1,19 @@
 <% content_for :sidebar_extra_actions do %>
-  <li>Adopt node</li>
-  <li>List orphans</li>
+  <li>Delete workspace</li>
 <% end %>  
 
 <% content_for :sidebar do
   render partial: 'edit/sidebar'
 end  %>
 
-TODO: Display workspace <%= @ws %>
+<h1>Workspace: <%=@ws.name%></h1>
+
+<div>
+<p>
+	To add or remove items from the workspace, add or remove items from its <%= link_to 'top node', controller: :node, action: :node, id: @ws.node.id %>.
+</p>
+</div>
+
+<%= render partial: "node/links", object:  @ws.node.subnode_link %>
 
 <%= render partial: "edit/sql_results" %>

@@ -11,7 +11,21 @@ class TreeNode < ActiveRecord::Base
 
   has_one :root_of, class_name: :Tree, foreign_key: :tree_node_id
 
+  belongs_to :tree, class_name: :Tree, foreign_key: :tree_id
+
   def end?
     id == 0
+  end
+  
+  def draft?
+    ! uri
+  end
+
+  def final?
+    ! ! uri
+  end
+  
+  def top?
+    ! ! root_of
   end
 end

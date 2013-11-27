@@ -1,0 +1,11 @@
+.node-nil { font-weight: bold; color: darkgray; }
+.node-end { font-weight: bold; color: darkgray; }
+
+.node-workspace-top { text-decoration: underline; }
+.node-tree-top { text-decoration: underline; }
+
+.node-draft { color: darkred; }
+.node-published { font-weight: bold; }
+.node-unpublished {  }
+
+.node-replaced { text-decoration: strikethrough; }

@@ -28,33 +28,8 @@ class NodeController < ApplicationController
     return
     end
 
-    if @n.end?
-      warn "Node #{id} is the end node"
-      redirect_to controller: :edit, action: :index
-    return
-    end
-
-    p @n
-
-    if @n.root_of
-      puts "node #{id} is root of "
-
-      if @n.root_of.workspace?
-        puts "#{id} is root of a workspace"
-        warn "Node #{id} is the top node of a workspace"
-        redirect_to controller: :workspace, action: :workspace, id: @n.root_of.id
-      return
-      else
-        puts "#{id} is root of a tree"
-        warn "Node #{id} is the top node of a tree"
-        redirect_to controller: :tree, action: :tree, id: @n.root_of.id
-      return
-      end
-    end
-
     setup_sidebar
 
-    todo "node"
     flash.discard
   end
 

@@ -42,7 +42,6 @@ class WorkspaceController < ApplicationController
       return
     end
   
-    todo "workspace"
     flash.discard
   end
   

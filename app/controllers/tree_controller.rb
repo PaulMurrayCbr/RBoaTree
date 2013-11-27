@@ -42,7 +42,6 @@ class TreeController < ApplicationController
       return
     end
   
-    todo "tree"
     flash.discard
   end
   
