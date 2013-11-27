@@ -18,7 +18,7 @@ module EditHelper
         css << ' node-final'
       end
 
-      if node.next
+      if node.replaced?
         css << ' node-replaced'
       else
         css << ' node-current'
@@ -30,11 +30,11 @@ module EditHelper
         css << ' node-end'
       end
 
-      if node.root_of && node.root_of.workspace?
+      if node.top? && node.root_of.workspace?
         css << ' node-workspace-top'
       end
 
-      if node.root_of && node.root_of.tree?
+      if node.top? && node.root_of.tree?
         css << ' node-tree-top'
       end
 
@@ -55,4 +55,29 @@ module EditHelper
     end
   end
   
+  def link_css(link)
+    css = 'link'
+    if link.nil?
+      css << ' link-nil'
+    elsif link.versioning?
+      css << 'link-versioning'
+    elsif link.tracking?
+      css << 'link-tracking'
+    elsif link.fixed?
+      css << 'link-fixed'
+    end    
+    return css
+  end
+  
+  def link_symbol(link)
+    if link.nil?
+      return '?'
+    elsif link.versioning?
+      return '&#x2192;'
+    elsif link.tracking?
+      return '&#x21AA;'
+    elsif link.fixed?
+      return '&#x21e5;'
+    end    
+  end
 end

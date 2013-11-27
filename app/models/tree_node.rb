@@ -1,6 +1,6 @@
 class TreeNode < ActiveRecord::Base
   self.table_name = 'tree_node'
-  has_one :next, class_name: :TreeNode, foreign_key: :next_node_id
+  has_one :replacement, class_name: :TreeNode, foreign_key: :next_node_id
   has_one :prev, class_name: :TreeNode, foreign_key: :prev_node_id
 
   has_many :next_of, class_name: :TreeNode, foreign_key: :prev_node_id
@@ -27,5 +27,13 @@ class TreeNode < ActiveRecord::Base
   
   def top?
     ! ! root_of
+  end
+  
+  def current?
+    ! replacement
+  end
+
+  def replaced?
+    ! ! replacement
   end
 end

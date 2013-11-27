@@ -1,18 +1,92 @@
 <% content_for :sidebar_extra_actions do %>
-  <li>Create node</li>
-  <li>Rename node</li>
-  <li>Delete node</li>
-  <li>Move node</li>
-  <li>Attach node</li>
-  <li>Finalise node</li>
-  <li>Publicise node</li>
-  <li>Apply node</li>
-<% end %>  
+<li>
+	Create node
+</li>
+<li>
+	Rename node
+</li>
+<li>
+	Delete node
+</li>
+<li>
+	Move node
+</li>
+<li>
+	Attach node
+</li>
+<li>
+	Finalise node
+</li>
+<li>
+	Publicise node
+</li>
+<li>
+	Apply node
+</li>
+<% end %>
 
 <% content_for :sidebar do
-  render partial: 'edit/sidebar'
-end %>  
-	
+    render partial: 'edit/sidebar'
+  end %>
+
 <h1>Node <%= render partial: "node/node", object: @n%></h1>
+
+<div>
+	<% if @n.end? %>
+	<p>
+		Node 0 is the end node. The end node is used as the 'next' verision of nodes that are deleted. This
+		distinguishes delete nodes from nodes which have been orpahned - not replaced, but not part of the
+		current tree anymored.
+	</p>
+	<p>
+		The end node cannot be edited, and it's URI is a constant that is shared across all realisations of the data structure.
+	</p>
+	<% elsif @n.top?
+			if @n.root_of.workspace?
+			%>
+			<p>
+				This node is the top node of a workspace. These nodes stay in 'draft' status and cannot be finalised. Like any other draft node, you can adopt nodes from other
+				trees and create new nodes.
+			</p>
+			<%
+			else
+			%>
+			<p>
+				This node is the top node of a tree. These nodes are final and cannot be edited. However, they have one subnode - the current root node of the tree. This is attached with a
+				following link, meaning that this top node will always point to the current version.
+			</p>
+			<%
+			end
+	   elsif @n.draft? %>
+		<p>
+			This node is a draft node. Most editing operations can be performed on it, and it can be finalised. 
+		</p>
+	<% else %>
+		<p>
+			This is a final node. Final nodes cannot be edited. However, if a final node has been adopted into a workpsace, then it can be 'checked out' in the context of that workspace - new draft nodes created in the workspace
+			modelled on this node. 
+		</p>
+		<% if @n.current? %>
+		<p>
+			This node also is a 'current' node - one that has never been versioned. It can be used as the new version of some other node and it can be replaced with a new version.
+		</p>
+		<% else %>
+		<p>
+			This node has been replaced. It is no longer actively versioned and cannot participate in versioning operations. 
+		</p>
+		<% end %>
+	
+	<% end %>
+	
+	<p>
+		Although certain operations "cannot" be done on this node, this web application will permit you to try to perform them. The changes will be rejected at the database layer, and you will see a
+		more-or-less meaningful error.
+	</p>
+</div>
+
+<div>TODO - display this tree</div> 
+<div>TODO - list all places where this node is attached. show if that's in a tree, if this node is current there, if that's in  workspce - link to 'checkout''</div>
+<div>TODO - all prev and next nodes, noting if it's a version/branch/merge/current draft</div>
+<div>TODO - show version history, with liks to comparison tool.</div>
 
 <%= render partial: "edit/sql_results" %>

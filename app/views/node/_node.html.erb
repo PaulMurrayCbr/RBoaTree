@@ -2,4 +2,4 @@
 
 <%= link_to "&larr;", controller: :node, action: :node, id: node.prev.id if node.prev %>
 <%= link_to "[#{node.id}]", controller: :node, action: :node, id: node.id%>
-<%= link_to "&rarr;", controller: :node, action: :node, id: node.next.id if node.next %>
+<%= link_to "&rarr;", controller: :node, action: :node, id: node.replacement.id if node.replacement %>

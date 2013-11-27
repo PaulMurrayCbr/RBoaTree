@@ -1,17 +1,6 @@
-<% links.each do | l | 
-	render partial: 'node/node', object: l.supernode
-
-	if l.versioning?
-		render inline: '<span class="link versioning-link">&#x2192;</span>'
-	elsif l.fixed?
-		render inline: '<span class="link fixed-link">&#x21E5;</span>'
-		render inline: '&#x21E5;'
-	else
-		render inline: '<span class="link tracking-link">&#x21AA;</span>'
-		render inline: '&#x21AA;'
-	end
-			
-	render partial: 'node/node', object: l.subnode
-
-	render inline: '<BR>'	
-end %>
+<% links.each do | l | %>
+	<%= render partial: 'node/node', object: l.supernode %>
+	<span class="<%=link_css(l)%>"><%=link_symbol(l)%></span>
+	<%= render partial: 'node/node', object: l.subnode %>
+	<br/>
+<% end %>

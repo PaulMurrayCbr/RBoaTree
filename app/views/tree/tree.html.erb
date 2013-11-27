@@ -11,6 +11,7 @@ end  %>
 
 <div>
 <p>
+	This tree is bound to the URI <tt><%=@t.node.uri%></tt> by its <%= link_to 'top node', controller: :node, action: :node, id: @t.node.id %>.
 	To add or remove items from the tree, check out its <%= link_to 'current root node', controller: :node, action: :node, id: @t.node.subnode_link.first.subnode.id %> into a workspace.
 </p>
 </div>
