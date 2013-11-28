@@ -24,6 +24,9 @@ Rboatree::Application.routes.draw do
   get 'node/:id/create-node-form' => 'node#create_node_form'
   post 'node/:id/create-node-action' => 'node#create_node_action'
 
+  get 'node/:id/adopt-node-form' => 'node#adopt_node_form'
+  post 'node/:id/adopt-node-action' => 'node#adopt_node_action'
+
   get 'node/:id' => 'node#node'
 
 

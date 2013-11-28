@@ -6,8 +6,11 @@ class NodeController < ApplicationController
   include ParamHelper
 
   def node
-    @n = getnode params
-    return if !@n 
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
     
 
     # ok. work out the tree placements.
@@ -37,16 +40,22 @@ class NodeController < ApplicationController
   end
 
   def create_node_form
-    @n = getnode params
-    return if !@n 
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
     
     setup_sidebar
     flash.discard
   end
 
   def create_node_action
-    @n = getnode params
-    return if !@n 
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
 
     if ! (/[VFT]/ =~ params[:link_type])
       warn 'Link type must be V, F, or T'
@@ -62,6 +71,42 @@ class NodeController < ApplicationController
     redirect_to action: :node, id: @n.id
   end
 
+  def adopt_node_form
+    @n = getnode params
+    if !@n 
+      redirect_to controller: edit, action: :index
+      return
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def adopt_node_action
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    
+    subn = getnodeparam params, :subnode_id
+    if !subn
+      redirect_to action: :adopt_node_form, id: n.id
+    end
+
+    if ! (/[VFT]/ =~ params[:link_type])
+      warn 'Link type must be V, F, or T'
+      redirect_to action: :adopt_node_form, id: n.id
+    end
+
+    begin
+      boatree_adopt_node @n.id, subn.id, params[:link_type]
+    rescue
+      return redirect_to action: :adopt_node_form, id: @n.id
+    end
+
+    redirect_to action: :node, id: @n.id
+  end
 
   private
 
@@ -70,22 +115,19 @@ class NodeController < ApplicationController
   end
 
   def getnode(params)
-    if !params[:id]
-      warn "No id specified"
-      return nil
-    end
+    @n = getnodeparam(params, :id)
+  end
 
-    id = to_int(params[:id])
-
+  def getnodeparam(params, sym)
+    id = getintparam(params, sym)
     if id.nil?
-      warn "\"#{params[:id]}\" is not a number"
       return nil
     end
 
     begin
       n = TreeNode.find(id)
     rescue ActiveRecord::RecordNotFound
-      warn "Node #{id} not found"
+      error "Node #{id} not found"
       return nil
     end
     

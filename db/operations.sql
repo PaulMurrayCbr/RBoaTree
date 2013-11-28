@@ -157,16 +157,16 @@ begin
 	
     raise notice 'boatree_create_draft_node(%, ''%'', ''%'')', _supernode_id, _node_name, _link_type;
 
+    _zz := null;
 	select count(*) ct from tree_node where id = _supernode_id into _zz;
-	
 	if _zz <> 1 
 	then
 		raise exception 'node % not found', _supernode_id;
 		return null;
 	end if;
-	
+
+	_uri := null;
 	select uri from tree_node where id = _supernode_id into _uri;
-	
 	if _uri is not null 
 	then
 		raise exception 'node % is not a draft node', _supernode_id;
@@ -202,6 +202,78 @@ begin
   	)
   	values (
   		_ts, _ts, _supernode_id, _node_id, _link_type
+  	)
+  	returning id into _link_id;
+
+  	return _link_id;
+end 
+$$
+language plpgsql;
+
+
+create or replace function boatree_adopt_node(_supernode_id integer, _subnode_id integer, _link_type char(1)) returns integer as $$
+declare 
+	_zz integer;
+	_tree_id integer;
+	_node_id integer;
+	_link_id integer;
+	_uri varchar;
+	_ts timestamp without time zone;
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_adopt_node(%, ''%'', ''%'')', _supernode_id, _subnode_id, _link_type;
+
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _supernode_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'node % not found', _supernode_id;
+		return null;
+	end if;
+
+	_uri := null;
+	select uri from tree_node where id = _supernode_id into _uri;
+	if _uri is not null 
+	then
+		raise exception 'node % is not a draft node', _supernode_id;
+		return null;
+	end if;
+	
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _subnode_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'node % not found', _subnode_id;
+		return null;
+	end if;
+
+	_uri := null;
+	select uri from tree_node where id = _subnode_id into _uri;
+	if _uri is null 
+	then
+		raise exception 'node % is  a draft node', _subnode_id;
+		return null;
+	end if;
+	
+	if _link_type not in ('F','T','V') 
+	then
+		raise exception 'link type is ''%'', should be one of ''F'', ''T'', or ''V''', _link_type;
+		return null;
+	end if;
+	
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+	
+  	insert into tree_link(
+  		created_at,
+  		updated_at,
+  		super_node_id,
+  		sub_node_id,
+  		link_type
+  	)
+  	values (
+  		_ts, _ts, _supernode_id, _subnode_id, _link_type
   	)
   	returning id into _link_id;
 

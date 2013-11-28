@@ -50,4 +50,12 @@ module BoatreeOperations
       return link_id
     end
   end
+
+  def boatree_adopt_node(supernode_id, subnode_id, link_type)
+    db_perform do
+      link_id = db_call :boatree_adopt_node, supernode_id, subnode_id, link_type
+      ok "Node link #{link_id} created under node #{supernode_id}"
+      return link_id
+    end
+  end
 end

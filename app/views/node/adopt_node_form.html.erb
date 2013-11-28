@@ -1,0 +1,31 @@
+<% render partial: 'node/sidebar' %>
+
+<h1>Adopt node</h1>
+
+<p>
+	Adopt an existing final node under <%= render partial: 'node/node', object: @n %>
+</p>
+
+<%= form_tag action: :adopt_node_action, class: 'form-inline' do  %>
+<fieldset>
+
+	<%= label_tag :link_type, "Link type" %>
+	<%= select_tag :link_type, options_for_select([
+			["#{link_symbol_by_code('V')} Versioning",'V'],
+			["#{link_symbol_by_code('T')} Tracking",'T'],
+			["#{link_symbol_by_code('F')} Fixed",'F']
+		], 'V')
+%>
+	<span class="help-block"><%= link_symbol_by_code('V')%> Versioning - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will be versioned.
+		<br/>
+		<%= link_symbol_by_code('T')%> Tracking - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will be updated.
+		<br/>
+		<%= link_symbol_by_code('F')%> Fixed - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will continue to point at this node.</span>
+	<%= label_tag :subnode_id, "Subnode id"  %>
+	<%= text_field_tag :subnode_id %>
+	<span class="help-block">This should be id some other finalised node from an existing tree.<BR/>
+		In further iterations of this tool, there will be some sort of search facility
+		but for now you will have to just type in a node id.</span>
+	<%= submit_tag "Create", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>
