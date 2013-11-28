@@ -1,6 +1,0 @@
-<% links.each do | l | %>
-	<%= render partial: 'node/node', object: l.supernode %>
-	<span class="<%=link_css(l)%>"><%= render inline: link_symbol(l)%></span>
-	<%= render partial: 'node/node', object: l.subnode %>
-	<br/>
-<% end %>
