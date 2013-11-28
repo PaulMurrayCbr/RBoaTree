@@ -43,4 +43,11 @@ module BoatreeOperations
     end
   end
     
+  def boatree_create_draft_node(supernode_id, node_name, link_type)
+    db_perform do
+      link_id = db_call :boatree_create_draft_node, supernode_id, node_name, link_type
+      ok "Node link #{link_id} created under node #{supernode_id}"
+      return link_id
+    end
+  end
 end

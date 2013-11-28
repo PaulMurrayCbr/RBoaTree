@@ -31,7 +31,7 @@ declare
 begin
 	_ts := localtimestamp;
 	
-	raise notice 'create_tree(''||_name||'', ''||_uri\\'')';
+	raise notice 'create_tree(''%'', ''%'')', _name, _uri;
 	
 	if _name is null then
 		raise exception 'name must not be null';
@@ -108,7 +108,7 @@ declare
 begin
 	_ts := localtimestamp;
 	
-	raise notice 'create_workspace(''||_name||'')';
+    raise notice 'create_workspace(''%'')', _name;
 	
 	if _name is null then
 		raise exception 'name must not be null';
@@ -144,3 +144,68 @@ end
 $$
 language plpgsql;
 
+create or replace function boatree_create_draft_node(_supernode_id integer, _node_name varchar, _link_type char(1)) returns integer as $$
+declare 
+	_zz integer;
+	_tree_id integer;
+	_node_id integer;
+	_link_id integer;
+	_uri varchar;
+	_ts timestamp without time zone;
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_create_draft_node(%, ''%'', ''%'')', _supernode_id, _node_name, _link_type;
+
+	select count(*) ct from tree_node where id = _supernode_id into _zz;
+	
+	if _zz <> 1 
+	then
+		raise exception 'node % not found', _supernode_id;
+		return null;
+	end if;
+	
+	select uri from tree_node where id = _supernode_id into _uri;
+	
+	if _uri is not null 
+	then
+		raise exception 'node % is not a draft node', _supernode_id;
+		return null;
+	end if;
+	
+	if _link_type not in ('F','T','V') 
+	then
+		raise exception 'link type is ''%'', should be one of ''F'', ''T'', or ''V''', _link_type;
+		return null;
+	end if;
+	
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+	
+	select tree_id from tree_node where id = _supernode_id into _tree_id;
+
+	insert into tree_node (
+  		created_at,
+  		updated_at,
+  		name,
+  		tree_id
+  	)
+  	values(_ts, _ts, _node_name, _tree_id)
+  	returning id into _node_id;
+	
+  	insert into tree_link(
+  		created_at,
+  		updated_at,
+  		super_node_id,
+  		sub_node_id,
+  		link_type
+  	)
+  	values (
+  		_ts, _ts, _supernode_id, _node_id, _link_type
+  	)
+  	returning id into _link_id;
+
+  	return _link_id;
+end 
+$$
+language plpgsql;

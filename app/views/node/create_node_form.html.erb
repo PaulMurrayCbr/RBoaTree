@@ -1,0 +1,27 @@
+<%  render partial: 'node/sidebar' %>
+
+<h1>Create node</h1>
+
+<p>
+	Create a new draft node under <%= render partial: 'node/node', object: @n %>
+</p>
+
+<%= form_tag action: :create_node_action, class: 'form-inline' do  %>
+<fieldset>
+	
+	<%= label_tag :link_type, "Link type" %>
+	<%= select_tag :link_type, options_for_select([
+			["#{link_symbol_by_code('V')} Versioning",'V'],
+			["#{link_symbol_by_code('T')} Tracking",'T'],
+			["#{link_symbol_by_code('F')} Fixed",'F']
+		], 'V')
+	%>
+    <span class="help-block"><%=link_symbol_by_code('V')%> Versioning - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will be versioned.<br/>
+    <%=link_symbol_by_code('T')%> Tracking - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will be updated.<br/>
+    <%=link_symbol_by_code('F')%> Fixed - when the new subnode is versioned, <%= render partial: 'node/node', object: @n %> will continue to point at this node.</span>
+	<%= label_tag :node_name, "Node name"  %>
+	<%= text_field_tag :node_name %>
+    <span class="help-block">This is typically a taxon name. This field may be left blank - if that's what you want to do.</span>
+	<%= submit_tag "Create", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

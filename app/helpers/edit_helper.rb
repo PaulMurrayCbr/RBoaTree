@@ -80,4 +80,16 @@ module EditHelper
       return '&#x21e5;'
     end    
   end
+
+  def link_symbol_by_code(type)
+    if type.nil?
+      return '?'
+    elsif type == 'V'
+      return "\u2192"
+    elsif type == 'T'
+      return "\u21AA"
+    elsif type == 'F'
+      return "\u21e5"
+    end    
+  end
 end

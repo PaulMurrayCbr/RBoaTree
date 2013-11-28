@@ -19,7 +19,13 @@ Rboatree::Application.routes.draw do
 
   get 'tree/:id' => 'tree#tree'
   get 'workspace/:id' => 'workspace#workspace'
+
+
+  get 'node/:id/create-node-form' => 'node#create_node_form'
+  post 'node/:id/create-node-action' => 'node#create_node_action'
+
   get 'node/:id' => 'node#node'
+
 
   
   # The priority is based upon order of creation: first created -> highest priority.

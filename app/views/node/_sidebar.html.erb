@@ -1,0 +1,34 @@
+<% content_for :sidebar_extra_actions do %>
+<li>
+	<hr/>
+	<%= link_to 'View node', controller: :node, action: :node, id: @n.id %>
+</li>
+<li>
+	<%= link_to 'Create node', controller: :node, action: :create_node_form, id: @n.id %>
+</li>
+<li>
+	Rename node
+</li>
+<li>
+	Delete node
+</li>
+<li>
+	Move node
+</li>
+<li>
+	Attach node
+</li>
+<li>
+	Finalise node
+</li>
+<li>
+	Publicise node
+</li>
+<li>
+	Apply node
+</li>
+<% end %>
+
+<% content_for :sidebar do
+    render partial: 'edit/sidebar'
+end %>
