@@ -19,6 +19,12 @@
 	<%= link_to 'Adopt node', controller: :node, action: :adopt_node_form, id: @n.id %>
 </li>
 <li>
+	<%= link_to 'Checkout node', controller: :node, action: :checkout_node_form, id: @n.id %>
+</li>
+<li>
+	<%= link_to 'Revert node', controller: :node, action: :revert_node_form, id: @n.id %>
+</li>
+<li>
 	Finalise node
 </li>
 <li>

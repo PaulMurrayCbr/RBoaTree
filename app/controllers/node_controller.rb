@@ -85,18 +85,17 @@ class NodeController < ApplicationController
   def adopt_node_action
     getnode params
     if !@n 
-      redirect_to controller: :edit, action: :index
-      return
+      return redirect_to controller: :edit, action: :index
     end
     
     subn = getnodeparam params, :subnode_id
     if !subn
-      redirect_to action: :adopt_node_form, id: n.id
+      return redirect_to action: :adopt_node_form, id: n.id
     end
 
     if ! (/[VFT]/ =~ params[:link_type])
       warn 'Link type must be V, F, or T'
-      redirect_to action: :adopt_node_form, id: n.id
+      return redirect_to action: :adopt_node_form, id: n.id
     end
 
     begin
@@ -105,8 +104,90 @@ class NodeController < ApplicationController
       return redirect_to action: :adopt_node_form, id: @n.id
     end
 
-    redirect_to action: :node, id: @n.id
+    return redirect_to action: :node, id: @n.id
   end
+
+  def checkout_node_form
+    @n = getnode params
+    if !@n 
+      return redirect_to controller: edit, action: :index
+    end
+    
+    @candidate_workspaces = Array.new
+    sql = "SELECT * from get_workspace_placements(#{@n.id})"
+    @result = ActiveRecord::Base.connection.execute(sql);
+    @result.each do |row| 
+      @candidate_workspaces << Tree.find(row['tree_id']) 
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def checkout_node_action
+    getnode params
+    if !@n 
+      return redirect_to controller: :edit, action: :index
+    end
+    
+    if params[:override_workspace_id] && !params[:override_workspace_id].empty?
+      w = to_int(params[:override_workspace_id])
+      if !w
+        warn "\"#{params[:override_workspace_id]}\" is not a number"
+        return redirect_to action: :checkout_node_form, id: @n.id
+      end
+    elsif params[:workspace_id] && !params[:workspace_id].empty?
+      w = to_int(params[:workspace_id])
+      if !w
+        warn "\"#{params[:workspace_id]}\" is not a number"
+        return redirect_to action: :checkout_node_form, id: @n.id
+      end
+    else
+      warn "Specify workspace"
+      return redirect_to action: :checkout_node_form, id: @n.id
+    end
+    
+    begin
+      ww = Tree.find(w)
+    rescue ActiveRecord::RecordNotFound
+      error "tree #{id} not found"
+      return redirect_to action: :checkout_node_form, id: @n.id
+    end
+    
+    
+    begin
+      newnode = boatree_checkout_node @n.id, ww.id
+    rescue Exception => e
+      return redirect_to action: :checkout_node_form, id: @n.id
+    end
+
+    redirect_to action: :node, id: newnode
+    
+  end
+
+  def revert_node_form
+    @n = getnode params
+    if !@n 
+      redirect_to controller: edit, action: :index
+      return
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def revert_node_action
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    todo 'revert node action'
+    redirect_to action: :node, id: @n.id
+    
+  end
+
+
 
   private
 

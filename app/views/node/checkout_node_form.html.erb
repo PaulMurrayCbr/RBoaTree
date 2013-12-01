@@ -1,0 +1,47 @@
+<% render partial: 'node/sidebar' %>
+
+<h1>Checkout node</h1>
+
+<p>
+	Checkout <%= render partial: 'node/node', object: @n %> in the context of some workspace. 
+	A new node will be created in the selected tree forthis node and for all final nodes above it up to the point where
+	it is attached.
+</p>
+<p>
+	You can undo a checkout with the 'revert' action.
+</p>
+
+<% if @n.draft? %>
+<p>
+	This action is performed on finalised nodes that are part of a tree, but <%= render partial: 'node/node', object: @n %>
+	is a draft node. You can attempt to check it out using the form bleow, but the database layer will reject the action.
+</p>
+<% end %>
+
+<% if @candidate_workspaces.empty? %>
+<p>
+	In order to perform this action, you will need to "adopt" the node into a workspace first. This is why the list of workspaces
+	in the box below is blank.
+</p>
+<% end %>
+
+<%= form_tag action: :checkout_node_action, class: 'form-inline' do  %>
+<fieldset>
+
+	<%= label_tag :workspace_id, "Checkout into workspace" %>
+	<%= select_tag :workspace_id, options_for_select(
+			@candidate_workspaces.collect { | w | [ w.name, w.id] } 
+		)
+%>
+	<span class="help-block"></span>
+
+	<%= label_tag :override_workspace_id, "Override workspace id"  %>
+	<%= text_field_tag :override_workspace_id %>
+	<span class="help-block">Rather than using a picklist, you can just put a node id into this field. The only reason to do this
+		is to test the underlying database operations - they should refuse to proceed if you specify anything other than one of the
+		nodes in the list.</span>
+
+
+	<%= submit_tag "Checkout", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

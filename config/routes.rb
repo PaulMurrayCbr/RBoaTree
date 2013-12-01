@@ -20,12 +20,17 @@ Rboatree::Application.routes.draw do
   get 'tree/:id' => 'tree#tree'
   get 'workspace/:id' => 'workspace#workspace'
 
-
   get 'node/:id/create-node-form' => 'node#create_node_form'
   post 'node/:id/create-node-action' => 'node#create_node_action'
 
   get 'node/:id/adopt-node-form' => 'node#adopt_node_form'
   post 'node/:id/adopt-node-action' => 'node#adopt_node_action'
+
+  get 'node/:id/checkout-node-form' => 'node#checkout_node_form'
+  post 'node/:id/checkout-node-action' => 'node#checkout_node_action'
+
+  get 'node/:id/revert-node-form' => 'node#revert_node_form'
+  post 'node/:id/revert-node-action' => 'node#revert_node_action'
 
   get 'node/:id' => 'node#node'
 

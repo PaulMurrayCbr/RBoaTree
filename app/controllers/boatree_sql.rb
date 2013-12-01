@@ -114,7 +114,7 @@ module BoatreeSql
     if r.ok?
       return r.result
     else
-      raise r.result
+      raise "#{proc}: #{r.result}"
     end
   end
   

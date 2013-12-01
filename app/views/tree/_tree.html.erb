@@ -1,0 +1,5 @@
+<% if tree.nil? %>
+	<span class='<%=node_css(nil)%>'>--NIL--</span>
+<% else %>
+<span class='<%=tree_css(tree)%>'><%=  tree.name %></span><%= link_to "[t#{tree.id}]", controller: :tree, action: :tree, id: tree.id%>
+<% end %>	

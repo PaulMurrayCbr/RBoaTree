@@ -7,7 +7,7 @@
 end  %>
 
 
-<h1>Tree: <span class="<%=tree_css(@t)%>"><%=@t.name%></span></h1>
+<h1>Tree: <%= render partial:'tree/tree', object: @t %></h1>
 
 <div>
 <p>
