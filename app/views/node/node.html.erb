@@ -75,6 +75,21 @@
 	<% end %>
 	
 </div>
+
+<% if !@n.replacement_of.empty? %>
+<div><h3>Merges</h3></div>
+<% @n.replacement_of.each do | nn| %>
+<%= render partial: "node/node", object: nn %>
+<% end %>
+<% end %>
+
+<% if !@n.copies.empty? %>
+<div><h3>Branches</h3></div>
+<% @n.copies.each do | nn| %>
+<%= render partial: "node/node", object: nn %>
+<% end %>
+<% end %>
+
 <div>
 	<h3>Tree structure</h3>
 	<div class="container-fluid">

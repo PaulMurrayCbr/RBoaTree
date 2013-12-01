@@ -3,6 +3,8 @@
  * Each operation checks its arguments, throwing an exception if they are unacceptable, and performs a transformastion.
  */
 
+drop table new_nodes;
+
 create or replace function boatree_reset() returns void as $$
 begin
 	raise notice 'boatree_reset()';	
@@ -281,3 +283,136 @@ begin
 end 
 $$
 language plpgsql;
+
+
+create or replace function boatree_checkout_node(_node_id integer, _ws_id integer) returns integer as $$
+declare 
+	_zz integer;
+	_uri varchar;
+	_ts timestamp without time zone;
+	_tree_type char(1);
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_checkout_node(%, ''%'')', _node_id, _ws_id;
+
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _node_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'node % not found', _node_id;
+		return null;
+	end if;
+	
+	_uri := null;
+	select uri from tree_node where id = _node_id into _uri;
+	if _uri is null
+	then
+		raise exception 'node % is not finalised', _node_id;
+		return null;
+	end if;
+
+    _zz :=  null;
+	select count(*) ct from tree where id = _ws_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'tree % not found', _ws_id;
+		return null;
+	end if;
+
+	select tree_type from tree where id = _ws_id into _tree_type;
+	if _tree_type <> 'W'
+	then
+		raise exception 'tree % is not a workspace', _ws_id;
+		return null;
+	end if;
+
+	/**
+	 * Ok. Now we need to find all final nodes that need checking out. To do this, we find all supernodes of
+	 * _node_id and then trim it that list down from the top node of _ws_id. If the node is not in the ws at all, then the resulting
+	 * set will be empty.
+	 */
+	
+	
+    create temporary table new_nodes (
+		curr_node_id integer primary key,
+		new_node_id integer
+	)
+	on commit drop;
+
+	insert into new_nodes(curr_node_id)
+	with recursive supernodes as (
+		select l.super_node_id, l.sub_node_id from tree_link l where sub_node_id = _node_id
+		union all
+		select l.super_node_id, l.sub_node_id from tree_link l, supernodes
+			where l.sub_node_id = supernodes.super_node_id
+	),
+	subnodes as (
+		select s.* from supernodes s, tree t where t.id = _ws_id and t.tree_node_id = s.super_node_id
+		union all
+		select s.* from supernodes s, subnodes b where b.sub_node_id = s.super_node_id
+	)
+	select distinct b.sub_node_id 
+		from subnodes b, tree_node n
+		where b.sub_node_id = n.id
+		and n.uri is not null
+	;
+	
+    _zz :=  null;
+	select count(*) ct from new_nodes into _zz;
+	if _zz = 0 
+	then
+		raise exception 'node % does not appeear to be in workspace %', _node_id, _ws_id;
+		return null;
+	end if;
+		
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+	
+	
+	update new_nodes set new_node_id = nextval('tree_node_id_seq');
+	
+	insert into tree_node (
+	  id,
+	  created_at,
+	  updated_at,
+	  name,
+	  tree_id,
+	  prev_node_id
+	)
+	select
+		new_node_id,
+		_ts, _ts,
+		n.name || '*', 
+		_ws_id, -- new node is owned by the workspace
+		curr_node_id -- prev version
+	from new_nodes, tree_node n where curr_node_id = n.id;
+	
+    create temporary table new_links (
+		curr_link_id integer primary key,
+		new_link_id integer
+	)
+	on commit drop;
+	
+	insert into tree_link (
+	  	created_at,updated_at,super_node_id,sub_node_id,link_type
+	)
+	select _ts, _ts, new_node_id, l.sub_node_id, l.link_type
+		from tree_link l, new_nodes
+		where curr_node_id = l.super_node_id
+	;
+		
+	update tree_link l
+		set sub_node_id =  (select new_node_id from new_nodes where curr_node_id = sub_node_id)
+		where 
+			(select tree_id from tree_node n where n.id = l.super_node_id) = _ws_id
+			and (select uri from tree_node n where n.id = l.super_node_id) is null
+			and sub_node_id in (select curr_node_id from new_nodes);
+	
+	_zz := null;
+    select new_node_id from new_nodes where curr_node_id = _node_id into _zz;
+	return _zz;
+end 
+$$
+language plpgsql;
+    
