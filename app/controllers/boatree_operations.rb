@@ -66,4 +66,12 @@ module BoatreeOperations
       return new_node_id
     end
   end
+
+  def boatree_delete_node(node_id)
+    db_perform do
+      new_node_id = db_call :boatree_delete_node, node_id
+      ok "Node #{node_id} deleted"
+      return new_node_id
+    end
+  end
 end

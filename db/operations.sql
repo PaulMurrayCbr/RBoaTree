@@ -415,4 +415,89 @@ begin
 end 
 $$
 language plpgsql;
+  
+
+create or replace function boatree_delete_node(_node_id integer) returns integer as $$
+declare 
+	_zz integer;
+	_uri varchar;
+	_ts timestamp without time zone;
+	_tree_type char(1);
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_delete_node(%)', _node_id;
     
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _node_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'node % not found', _node_id;
+		return null;
+	end if;
+	
+	_uri := null;
+	select uri from tree_node where id = _node_id into _uri;
+	if _uri is not null
+	then
+		raise exception 'node % is finalised', _node_id;
+		return null;
+	end if;
+	
+    _zz :=  null;
+	select count(*) ct from tree where tree_node_id = _node_id into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'node % is a workspace top node', _node_id;
+		return null;
+	end if;
+	
+    create temporary table to_be_deleted (
+		id integer primary key
+	)
+	on commit drop;
+
+	insert into to_be_deleted
+	select id from (
+		with recursive n as (
+			select id from tree_node where id = _node_id
+			union all
+			select sub_node_id from n, tree_link, tree_node
+			where tree_link.super_node_id = n.id
+			and tree_link.sub_node_id = tree_node.id
+			and tree_node.uri is null
+		)
+		select id from n
+	) tbd;
+
+	-- ok, this should never happen, but check that deleting these nodes does not result in any
+	-- draft node having no parent node
+	
+	_zz := null;
+	select count(*) from to_be_deleted, tree_link, tree_node
+	where to_be_deleted.id = tree_link.super_node_id
+	and tree_node.id = tree_link.sub_node_id
+	and tree_node.uri is null
+	and tree_node.id not in (select id from to_be_deleted)
+	into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'deleting node % results in incosistencies. This should never happen.', _node_id;
+		return null;
+	end if;
+	
+	
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+	
+	delete from tree_link
+	where super_node_id in (select id from to_be_deleted)
+	or sub_node_id in (select id from to_be_deleted);
+	
+	delete from tree_node where id in (select id from to_be_deleted);
+
+	return null;
+end 
+$$
+language plpgsql;
+

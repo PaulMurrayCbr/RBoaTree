@@ -32,6 +32,9 @@ Rboatree::Application.routes.draw do
   get 'node/:id/revert-node-form' => 'node#revert_node_form'
   post 'node/:id/revert-node-action' => 'node#revert_node_action'
 
+  get 'node/:id/delete-node-form' => 'node#delete_node_form'
+  post 'node/:id/delete-node-action' => 'node#delete_node_action'
+
   get 'node/:id' => 'node#node'
 
 

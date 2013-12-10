@@ -10,7 +10,7 @@
 	Rename node
 </li>
 <li>
-	Delete node
+	<%= link_to 'Delete node', controller: :node, action: :delete_node_form, id: @n.id %>
 </li>
 <li>
 	Move node

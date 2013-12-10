@@ -1,0 +1,21 @@
+<% render partial: 'node/sidebar' %>
+
+<h1>Delete node</h1>
+
+<p>
+	Delete (draft) node <%= render partial: 'node/node', object: @n %> . 
+	The node will be deleted, as will any draft nodes below it that are linked nowhere else. 
+</p>
+
+<% if ! @n.draft? %>
+<p>
+	This action can only be performed on draft nodes. You can attenpt to delete  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<%= form_tag action: :delete_node_action, class: 'form-inline' do  %>
+<fieldset>
+	<%= submit_tag "Delete", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

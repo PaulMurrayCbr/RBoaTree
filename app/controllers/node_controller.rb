@@ -165,10 +165,45 @@ class NodeController < ApplicationController
     
   end
 
+  def delete_node_form
+    @n = getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def delete_node_action
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    
+    t = @n.tree
+
+    begin
+      boatree_delete_node @n.id
+      
+      if t.tree?
+        return redirect_to controller: :tree, action: :tree, id: t.id
+      else
+        return redirect_to controller: :workspace, action: :workspace, id: t.id
+      end
+      
+    rescue Exception => e
+      return redirect_to action: :delete_node_form, id: @n.id
+    end
+    
+  end
+
   def revert_node_form
     @n = getnode params
     if !@n 
-      redirect_to controller: edit, action: :index
+      redirect_to controller: :edit, action: :index
       return
     end
     
