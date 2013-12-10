@@ -1,10 +1,4 @@
-<% content_for :sidebar_extra_actions do %>
-  <li>Delete workspace</li>
-<% end %>  
-
-<% content_for :sidebar do
-  render partial: 'edit/sidebar'
-end  %>
+<% render partial: 'workspace/sidebar' %>
 
 <h1>Workspace: <span class="<%=tree_css(@ws)%>"><%=@ws.name%></span></h1>
 

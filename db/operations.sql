@@ -486,7 +486,6 @@ begin
 		return null;
 	end if;
 	
-	
 	-----------------------------------------------------
 	-- END OF CHECKS, BEGINNING OF OPERATIONS  
 	
@@ -500,4 +499,88 @@ begin
 end 
 $$
 language plpgsql;
+
+
+create or replace function boatree_delete_workspace(_ws_id integer) returns integer as $$
+declare 
+	_zz integer;
+	_uri varchar;
+	_ts timestamp without time zone;
+	_tree_type char(1);
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_delete_workspace(%)', _ws_id;
+
+	-- check that ws exists
+
+    _zz :=  null;
+	select count(*) ct from tree where id = _ws_id and tree_type = 'W' into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'Workspace % not found', _ws_id;
+		return null;
+	end if;
+
+    -- check that no workspace node is the subnode of any node not in the workspace
+    
+    _zz :=  null;
+	select count(*) ct 
+	from tree_node supn, tree_node subn, tree_link l
+	where subn.tree_id = _ws_id
+	and subn.id = l.sub_node_id
+	and supn.id = l.super_node_id
+	and supn.tree_id <> _ws_id
+	into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'Workspace % has nodes that are linked to from other trees', _ws_id;
+		return null;
+	end if;
+
+	-- THIS NEVER HAPPENS. Check that deleting the nodes in this workspace will not result in draft nodes
+	-- being left orphan
+	
+    _zz :=  null;
+	select count(*) ct 
+	from tree_node supn, tree_node subn, tree_link l
+	where supn.tree_id = _ws_id
+	and supn.id = l.super_node_id
+	and subn.id = l.sub_node_id
+	and supn.tree_id <> _ws_id
+	and subn.uri is null 
+	-- is this subnode, in a different tree, not the subnode of *any* other tree node?
+	and not exists (
+		select othernode.id
+		from tree_node othernode, tree_link otherlink
+		where otherlink.sub_node_id = subn.id
+		and otherlink.super_node_id = othernode.id
+		and othernode.tree_id <> _ws_id
+	)
+	into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'THIS NEVER HAPPENS - deleting workspace % will result in orphaned draft nodes', _ws_id;
+		return null;
+	end if;
+	
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+
+	delete from tree_link
+	where super_node_id in (
+		select id from tree_node where tree_id = _ws_id
+	);
+	
+	update tree set tree_node_id = null where id = _ws_id;
+
+	delete from tree_node where tree_id = _ws_id;
+	
+	delete from tree where id = _ws_id;
+	
+	return null;
+end 
+$$
+language plpgsql;
+    
 

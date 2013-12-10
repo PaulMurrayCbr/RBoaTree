@@ -1,0 +1,19 @@
+<% render partial: 'workspace/sidebar' %>
+
+<h1>Delete workspace</h1>
+
+<p>
+	Delete workspace <span class="<%=tree_css(@ws)%>"><%=@ws.name%></span> . All draft work will be discarded.
+</p>
+
+<% if ! @ws.workspace? %>
+<p>
+	This tree does not appear to be a workspace tree. You can attempt to delete it, but the action will be rejected at the database layer.
+</p>
+<% end %>
+
+<%= form_tag action: :delete_workspace_action, class: 'form-inline' do  %>
+<fieldset>
+	<%= submit_tag "Delete", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

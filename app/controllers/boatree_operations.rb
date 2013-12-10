@@ -69,9 +69,17 @@ module BoatreeOperations
 
   def boatree_delete_node(node_id)
     db_perform do
-      new_node_id = db_call :boatree_delete_node, node_id
+      db_call :boatree_delete_node, node_id
       ok "Node #{node_id} deleted"
-      return new_node_id
+      return nil
+    end
+  end
+
+  def boatree_delete_workspace(ws_id)
+    db_perform do
+      db_call :boatree_delete_workspace, ws_id
+      ok "Workspace #{ws_id} deleted"
+      return nil
     end
   end
 end

@@ -7,45 +7,69 @@ class WorkspaceController < ApplicationController
   
   def workspace
     setup_sidebar
-    
-    if !params[:id]
-      warn "No id specified"
-      redirect_to action: :index
-      return
-    end
- 
-    id = to_int(params[:id])
+    getws params
 
-    if id.nil?
-      warn "\"#{params[:id]}\" is not a number"
-      redirect_to controller: :edit, action: :index
-      return
+    if !@ws
+      return redirect_to controller: :edit, action: :list_workspaces
     end
  
-    begin
-      @ws = Tree.find(id)
-    rescue ActiveRecord::RecordNotFound
-      warn "Tree #{id} not found"
-      redirect_to controller: :edit, action: :index
-      return
-    end 
-    
-    if @ws.end?
-      warn "Tree #{id} is the end tree"      
-      redirect_to controller: :edit, action: :index
-      return
-    end
-  
-    if @ws.tree?
-      warn "Tree #{id} is a tree"      
-      redirect_to controller: :tree, action: :tree, id: id
-      return
-    end
-  
     flash.discard
   end
   
+  def delete_workspace_form
+    getws params
+    if !@ws
+      return redirect_to controller: :edit, action: :list_workspaces
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def delete_workspace_action
+    getws params
+    if !@ws
+      return redirect_to controller: :edit, action: :list_workspaces
+    end
+    
+    begin
+      boatree_delete_workspace @ws.id
+      return redirect_to controller: :edit, action: :list_workspaces
+    rescue Exception => e
+      return redirect_to action: :delete_workspace_form, id: @ws.id
+    end
+
+
+  end
+
+  
   private
+  
+  def getws(params)
+    @ws = getwsparam(params, :id)
+  end
+
+  def getwsparam(params, sym)
+    id = getintparam(params, sym)
+    if id.nil?
+      return nil
+    end
+
+    begin
+      ws = Tree.find(id)
+    rescue ActiveRecord::RecordNotFound
+      error "Tree #{id} not found"
+      return nil
+    end
+    
+    if !ws.workspace?
+      error "Tree #{id} is not a workspace"
+      return nil
+    end
+    
+    return ws
+  end
+  
   
   def setup_sidebar
     

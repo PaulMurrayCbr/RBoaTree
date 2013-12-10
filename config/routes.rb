@@ -18,6 +18,10 @@ Rboatree::Application.routes.draw do
   get 'edit/workspaces' => 'edit#list_workspaces'
 
   get 'tree/:id' => 'tree#tree'
+  
+  get 'workspace/:id/delete-workspace-form' => 'workspace#delete_workspace_form'
+  post 'workspace/:id/delete-workspace-action' => 'workspace#delete_workspace_action'
+
   get 'workspace/:id' => 'workspace#workspace'
 
   get 'node/:id/create-node-form' => 'node#create_node_form'

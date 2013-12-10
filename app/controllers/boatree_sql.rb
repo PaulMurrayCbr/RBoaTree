@@ -73,7 +73,7 @@ module BoatreeSql
         return block.call
       end
     rescue Exception => e
-      error e.to_s
+      exception e
       raise e
     ensure
       info 'Time:', "#{((Time.now - t) * 1000).to_i}ms"
@@ -110,6 +110,8 @@ module BoatreeSql
     end
 
     r.ms = ((Time.now - t) * 1000).to_i
+    
+puts "#{proc}(#{args}) => #{r.result}"    
     
     if r.ok?
       return r.result
