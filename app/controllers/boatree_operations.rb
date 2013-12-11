@@ -90,4 +90,12 @@ module BoatreeOperations
       return nil
     end
   end
+
+  def boatree_finalise_node(node_id)
+    db_perform do
+      db_call :boatree_finalise_node, node_id
+      ok "Node #{node_id} finalised"
+      return nil
+    end
+  end
 end

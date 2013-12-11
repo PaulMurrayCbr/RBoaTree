@@ -613,4 +613,18 @@ end
 $$
 language plpgsql;
     
+create or replace function boatree_finalise_node(_node_id integer) returns integer as $$
+declare 
+	_zz integer;
+	_ts timestamp without time zone;
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_finalise_node(''%'')', _node_id;
+
+    raise exception 'TODO!';
+end 
+$$
+language plpgsql;
+
 

@@ -222,6 +222,32 @@ class NodeController < ApplicationController
     
   end
 
+  def finalise_node_form
+    @n = getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    
+    setup_sidebar
+    flash.discard
+  end
+
+  def finalise_node_action
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+
+    begin
+      boatree_finalise_node @n.id
+      return redirect_to action: :node, id: @n.id
+    rescue Exception => e
+      return redirect_to action: :finalise_node_form, id: @n.id
+    end
+  end
+
 
 
   private

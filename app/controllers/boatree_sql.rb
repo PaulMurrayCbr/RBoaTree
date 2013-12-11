@@ -111,8 +111,6 @@ module BoatreeSql
 
     r.ms = ((Time.now - t) * 1000).to_i
     
-puts "#{proc}(#{args}) => #{r.result}"    
-    
     if r.ok?
       return r.result
     else

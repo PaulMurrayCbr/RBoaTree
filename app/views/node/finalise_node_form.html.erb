@@ -1,0 +1,29 @@
+<% render partial: 'node/sidebar' %>
+
+<h1>Finalise node</h1>
+
+<p>
+	Finalise node <%= render partial: 'node/node', object: @n %> . 
+	The node and all draft nodes below it will be assigned a persistent URI and become 'final' nodes. From that point on, they can be used in other trees, versioned, and so on. They will
+	no longer be editable.
+</p>
+
+<% if ! @n.draft? %>
+<p>
+	This action can only be performed on draft nodes. You can attempt to finalise  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<% if @n.top? && @n.draft? %>
+<p>
+	This action cannot be performed on the top node of a workspace - workspaces are always in draft mode. You can attempt to finalise  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<%= form_tag action: :finalise_node_action, class: 'form-inline' do  %>
+<fieldset>
+	<%= submit_tag "Finalise", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>
