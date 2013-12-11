@@ -1,28 +1,16 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+We are not using migrate, because the point of this system is that it's a database thing, not a ruby thing.
 
-Things you may want to cover:
+Requirements:
+* postgres running on localhost, port 5432
+* a user role named 'tree-admin', no password
+* a user role named 'tree-appuser', no passwored
+* a database named 'tree', owned by 'tree-admin'
 
-* Ruby version
+Artifacts are put in the 'public' schema of database 'tree'
 
-* System dependencies
+run db/init - it's a bash script. All it does is runs db/*.sql against postgres on localhost to set up the database.
 
-* Configuration
+After that, just rails s
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
