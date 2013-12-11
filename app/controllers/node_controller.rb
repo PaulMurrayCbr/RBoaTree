@@ -217,8 +217,15 @@ class NodeController < ApplicationController
       redirect_to controller: :edit, action: :index
       return
     end
-    todo 'revert node action'
-    redirect_to action: :node, id: @n.id
+
+    supernode = @n.supernode_link.empty? ? nil : @n.supernode_link.first.supernode # there should only be one
+
+    begin
+      boatree_revert_node @n.id
+      return redirect_to action: :node, id: supernode
+    rescue Exception => e
+      return redirect_to action: :revert_node_form, id: @n.id
+    end
     
   end
 

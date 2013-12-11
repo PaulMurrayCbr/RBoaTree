@@ -98,4 +98,12 @@ module BoatreeOperations
       return nil
     end
   end
+
+  def boatree_revert_node(node_id)
+    db_perform do
+      n = db_call :boatree_revert_node, node_id
+      ok "Node #{node_id} reverted"
+      return nil
+    end
+  end
 end

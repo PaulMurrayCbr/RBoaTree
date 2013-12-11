@@ -110,16 +110,17 @@
 				%>
 			</div>				
 			<div class="span3">
+				<!-- These are listed 99 deep for development purposes -->
 				<h5>Previous version</h5>
-	<%= render partial: 'node/tree_structure', locals: {node: @n.copy_of, depth: 2}%>
+	<%= render partial: 'node/tree_structure', locals: {node: @n.copy_of, depth: 99}%>
 			</div>
 			<div class="span4">
 				<h5>This version</h5>
-	<%= render partial: 'node/tree_structure', locals: {node: @n, depth: 2}%>
+	<%= render partial: 'node/tree_structure', locals: {node: @n, depth: 99}%>
 			</div>
 			<div class="span3">
 				<h5>Replacement version</h5>
-	<%= render partial: 'node/tree_structure', locals: {node: @n.replacement, depth: 2}%>
+	<%= render partial: 'node/tree_structure', locals: {node: @n.replacement, depth: 99}%>
 			</div>
 			<div class="span1" style="font-size: 80%;">
 				<h5>Later versions</h5>

@@ -450,50 +450,7 @@ begin
 		return null;
 	end if;
 	
-    create temporary table to_be_deleted (
-		id integer primary key
-	)
-	on commit drop;
-
-	insert into to_be_deleted
-	select id from (
-		with recursive n as (
-			select id from tree_node where id = _node_id
-			union all
-			select sub_node_id from n, tree_link, tree_node
-			where tree_link.super_node_id = n.id
-			and tree_link.sub_node_id = tree_node.id
-			and tree_node.uri is null
-		)
-		select id from n
-	) tbd;
-
-	-- ok, this should never happen, but check that deleting these nodes does not result in any
-	-- draft node having no parent node
-	
-	_zz := null;
-	select count(*) from to_be_deleted, tree_link, tree_node
-	where to_be_deleted.id = tree_link.super_node_id
-	and tree_node.id = tree_link.sub_node_id
-	and tree_node.uri is null
-	and tree_node.id not in (select id from to_be_deleted)
-	into _zz;
-	if _zz <> 0 
-	then
-		raise exception 'deleting node % results in incosistencies. This should never happen.', _node_id;
-		return null;
-	end if;
-	
-	-----------------------------------------------------
-	-- END OF CHECKS, BEGINNING OF OPERATIONS  
-	
-	delete from tree_link
-	where super_node_id in (select id from to_be_deleted)
-	or sub_node_id in (select id from to_be_deleted);
-	
-	delete from tree_node where id in (select id from to_be_deleted);
-
-	return null;
+	return _boatree_delete_draft_node(_node_id, _ts);
 end 
 $$
 language plpgsql;
@@ -515,7 +472,7 @@ begin
 		return null;
 	end if;
 
-	return boatree_delete_t_or_ws(_ws_id);
+	return _boatree_delete_t_or_ws(_ws_id);
 end 
 $$
 language plpgsql;
@@ -536,12 +493,12 @@ begin
 		return null;
 	end if;
 
-	return boatree_delete_t_or_ws(_tree_id);
+	return _boatree_delete_t_or_ws(_tree_id);
 end 
 $$
 language plpgsql;
     
-create or replace function boatree_delete_t_or_ws(_id integer) returns integer as $$
+create or replace function _boatree_delete_t_or_ws(_id integer) returns integer as $$
 declare 
 	_zz integer;
 begin
@@ -622,9 +579,145 @@ begin
 	
     raise notice 'boatree_finalise_node(''%'')', _node_id;
 
-    raise exception 'TODO!';
+    -- node muse exist, be a draft node, and not be a tree root
+    
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _node_id and uri is null into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'Draft node % not found', _node_id;
+		return null;
+	end if;
+
+	_zz :=  null;
+	select count(*) ct from tree where tree_node_id = _node_id into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'Cannot finalise tree root %', _node_id;
+		return null;
+	end if;
+	
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+
+	update tree_node
+	set uri = 'http://example.org/boatree/node#' || id,
+		updated_at = _ts
+	where id in (
+		with recursive n as (
+			select id from tree_node where id = _node_id
+			union all
+			select tree_node.id
+			from tree_node, tree_link, n
+			where n.id = tree_link.super_node_id
+			and tree_link.sub_node_id = tree_node.id
+			and tree_node.uri is null
+		)
+		select id from n
+	);
+	
+	return _node_id;    
 end 
 $$
 language plpgsql;
 
+create or replace function boatree_revert_node(_node_id integer) returns integer as $$
+declare 
+	_zz integer;
+	_copy_of integer;
+	_ts timestamp without time zone;
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_revert_node(''%'')', _node_id;
+
+    -- node must exist, be a draft node, not be a tree root, and be a 'copy_of'
+    
+    _zz :=  null;
+	select count(*) ct from tree_node where id = _node_id and uri is null and prev_node_id is not null into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'Draft checked-out node % not found', _node_id;
+		return null;
+	end if;
+
+	-- this never happens
+	_zz :=  null;
+	select count(*) ct from tree where tree_node_id = _node_id into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'Cannot revert tree root %', _node_id;
+		return null;
+	end if;
+
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+
+	
+	select prev_node_id from tree_node where id = _node_id into _copy_of;
+	
+	update tree_node
+	set updated_at = _ts
+	where id in (
+		select super_node_id from tree_link where sub_node_id = _node_id
+	);
+	
+	update tree_link
+	set updated_at = _ts, sub_node_id = _copy_of
+	where sub_node_id = _node_id;
+	
+	return _boatree_delete_draft_node(_node_id, _ts);
+end 
+$$
+language plpgsql;
+
+create or replace function _boatree_delete_draft_node(_node_id integer, _ts timestamp without time zone) returns integer as $$
+begin
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+
+    create temporary table nodes (
+		id integer primary key
+	)
+	on commit drop;
+	
+	insert into nodes
+	select id from (
+		with recursive n as (
+			select id from tree_node where id = _node_id
+			union all
+			select tree_node.id
+			from tree_node, tree_link, n
+			where n.id = tree_link.super_node_id
+			and tree_link.sub_node_id = tree_node.id
+			and tree_node.uri is null
+		),
+		allinks as (
+			select tree_link.* from tree_link, n where tree_link.sub_node_id = n.id
+		),
+		externallinks as (
+			select allinks.* from allinks where allinks.super_node_id not in (select id from n)
+		),
+		-- we need to find the subtrees that are linked to externally and cannot be deleted
+		externallinksubtree as (
+			select externallinks.sub_node_id as id from externallinks
+			union all
+			select tree_link.sub_node_id as id
+				from externallinksubtree, tree_link, tree_node
+				where externallinksubtree.id = tree_link.super_node_id
+				and tree_link.sub_node_id = tree_node.id
+				and tree_node.uri is null -- not strictly necessary, but limits recursion to the interesting bit
+		)
+		select id from n where n.id not in (select id from externallinksubtree)
+	) n;
+
+	delete from tree_link where super_node_id in ( select id from nodes);
+	
+	-- this would fail if our draft tree contains diamonds, if not for the extra checks in the nodes query
+	delete from tree_node where id in ( select id from nodes);
+	
+	return null;
+end 
+$$
+language plpgsql;
 

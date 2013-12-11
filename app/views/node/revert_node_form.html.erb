@@ -1,0 +1,35 @@
+<% render partial: 'node/sidebar' %>
+
+<h1>Revert node</h1>
+
+<p>
+	Revert node <%= render partial: 'node/node', object: @n %> . 
+	The node and all draft nodes below it will be deleted and the node will be replaced with the node of which it is a copy (ie, the one that was checked out).
+</p>
+
+<% if ! @n.draft? %>
+<p>
+	This action can only be performed on draft nodes. You can attempt to revert  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<% if ! @n.copy_of %>
+<p>
+	This action can only be performed on nodes that are a checked-out copy of some other node. You can attempt to revert  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<% if @n.top? %>
+<p>
+	This action cannot be performed on the top node of any tree. You can attempt to revert  <%= render partial: 'node/node', object: @n %>, but the action
+	will be rejected at the database layer.
+</p>
+<% end %>
+
+<%= form_tag action: :revert_node_action, class: 'form-inline' do  %>
+<fieldset>
+	<%= submit_tag "Revert", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>

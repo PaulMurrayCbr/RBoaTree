@@ -30,11 +30,11 @@ class ValidateDataController < ApplicationController
     tt(msg, 'There should be a END tree') { Tree.find(0) }
     tt(msg, 'There should be a END node') { TreeNode.find(0) }
     ttt(msg, 'The node of the end tree should be the end node') { Tree.find(0).node == TreeNode.find(0) }
-    ttt(msg, 'End node should have no previous version') { TreeNode.find(0).prev == nil}
+    ttt(msg, 'End node should have no previous version') { TreeNode.find(0).copy_of == nil}
     ttt(msg, 'End node should have no next version') { TreeNode.find(0).replacement == nil}
     ttt(msg, 'End node should have no supernodes') { TreeNode.find(0).supernode_link.empty?}
     ttt(msg, 'End node should have no subnodes') { TreeNode.find(0).subnode_link.empty?}
-    ttt(msg, 'End node should not be the prev of any node') { TreeNode.find(0).prev_of.empty?}
+    ttt(msg, 'End node should not be the prev of any node') { TreeNode.find(0).copies.empty?}
   end
 
   def tt(msg, t, &b)
