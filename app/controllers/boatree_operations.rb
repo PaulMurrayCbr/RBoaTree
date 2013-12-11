@@ -82,4 +82,12 @@ module BoatreeOperations
       return nil
     end
   end
+
+  def boatree_delete_tree(tree_id)
+    db_perform do
+      db_call :boatree_delete_tree, tree_id
+      ok "Tree #{tree_id} deleted"
+      return nil
+    end
+  end
 end

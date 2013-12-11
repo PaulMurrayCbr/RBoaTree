@@ -3,8 +3,6 @@
  * Each operation checks its arguments, throwing an exception if they are unacceptable, and performs a transformastion.
  */
 
-drop table new_nodes;
-
 create or replace function boatree_reset() returns void as $$
 begin
 	raise notice 'boatree_reset()';	
@@ -504,12 +502,7 @@ language plpgsql;
 create or replace function boatree_delete_workspace(_ws_id integer) returns integer as $$
 declare 
 	_zz integer;
-	_uri varchar;
-	_ts timestamp without time zone;
-	_tree_type char(1);
 begin
-	_ts := localtimestamp;
-	
     raise notice 'boatree_delete_workspace(%)', _ws_id;
 
 	-- check that ws exists
@@ -522,45 +515,82 @@ begin
 		return null;
 	end if;
 
-    -- check that no workspace node is the subnode of any node not in the workspace
+	return boatree_delete_t_or_ws(_ws_id);
+end 
+$$
+language plpgsql;
     
+create or replace function boatree_delete_tree(_tree_id integer) returns integer as $$
+declare 
+	_zz integer;
+begin
+    raise notice 'boatree_delete_workspace(%)', _tree_id;
+
+	-- check that ws exists
+
     _zz :=  null;
-	select count(*) ct 
-	from tree_node supn, tree_node subn, tree_link l
-	where subn.tree_id = _ws_id
-	and subn.id = l.sub_node_id
-	and supn.id = l.super_node_id
-	and supn.tree_id <> _ws_id
-	into _zz;
-	if _zz <> 0 
+	select count(*) ct from tree where id = _tree_id and tree_type = 'T' into _zz;
+	if _zz <> 1 
 	then
-		raise exception 'Workspace % has nodes that are linked to from other trees', _ws_id;
+		raise exception 'Workspace % not found', _tree_id;
 		return null;
 	end if;
 
-	-- THIS NEVER HAPPENS. Check that deleting the nodes in this workspace will not result in draft nodes
+	return boatree_delete_t_or_ws(_tree_id);
+end 
+$$
+language plpgsql;
+    
+create or replace function boatree_delete_t_or_ws(_id integer) returns integer as $$
+declare 
+	_zz integer;
+begin
+	-- ok. Deletion of an entire tree has some pretty serious checks. Basically: none of the nodes in the tree may
+	-- be linked from another tree.
+	
+	-- We also check that deleting the tree will not result in orphaned draft nodes, but in a well-formed
+	-- dataset this never happens.
+	
+	-- Tree deletion *may* result in orphaned final nodes, but only where odd things have been going on.
+
+	-- check that no-one else links to this tree
+    _zz :=  null;
+	select count(*) ct 
+	from tree_node supn, tree_node subn, tree_link l
+	where subn.tree_id = _id
+	and subn.id = l.sub_node_id
+	and supn.id = l.super_node_id
+	and supn.tree_id <> _id
+	into _zz;
+	if _zz <> 0 
+	then
+		raise exception 'Tree/Workspace % has nodes that are linked to from other trees', _id;
+		return null;
+	end if;
+
+	-- THIS NEVER HAPPENS. Check that deleting the nodes in this tree will not result in draft nodes
 	-- being left orphan
 	
     _zz :=  null;
 	select count(*) ct 
 	from tree_node supn, tree_node subn, tree_link l
-	where supn.tree_id = _ws_id
+	where supn.tree_id = _id
 	and supn.id = l.super_node_id
 	and subn.id = l.sub_node_id
-	and supn.tree_id <> _ws_id
-	and subn.uri is null 
+	and supn.tree_id <> _id
+	and subn.uri is null -- only interested in this for draft nodes, at the moment
 	-- is this subnode, in a different tree, not the subnode of *any* other tree node?
 	and not exists (
 		select othernode.id
 		from tree_node othernode, tree_link otherlink
 		where otherlink.sub_node_id = subn.id
 		and otherlink.super_node_id = othernode.id
-		and othernode.tree_id <> _ws_id
+		and othernode.tree_id <> _id
 	)
 	into _zz;
 	if _zz <> 0 
 	then
-		raise exception 'THIS NEVER HAPPENS - deleting workspace % will result in orphaned draft nodes', _ws_id;
+		raise exception 'THIS NEVER HAPPENS - deleting workspace % will result in orphaned draft nodes', _id;
 		return null;
 	end if;
 	
@@ -569,14 +599,14 @@ begin
 
 	delete from tree_link
 	where super_node_id in (
-		select id from tree_node where tree_id = _ws_id
+		select id from tree_node where tree_id = _id
 	);
 	
-	update tree set tree_node_id = null where id = _ws_id;
+	update tree set tree_node_id = null where id = _id;
 
-	delete from tree_node where tree_id = _ws_id;
+	delete from tree_node where tree_id = _id;
 	
-	delete from tree where id = _ws_id;
+	delete from tree where id = _id;
 	
 	return null;
 end 

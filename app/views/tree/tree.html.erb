@@ -1,12 +1,4 @@
-<% content_for :sidebar_extra_actions do %>
-  <li>List orphans</li>
-  <li>Delete tree</li>
-<% end %>  
-
-<% content_for :sidebar do
-  render partial: 'edit/sidebar'
-end  %>
-
+<% render partial: 'tree/sidebar' %>
 
 <h1>Tree: <%= render partial:'tree/tree', object: @t %></h1>
 

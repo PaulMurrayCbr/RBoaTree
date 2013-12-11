@@ -1,0 +1,8 @@
+<% content_for :sidebar_extra_actions do %>
+  <li>List orphans</li>
+	<%= link_to 'Delete tree', controller: :tree, action: :delete_tree_form, id: @t.id %>
+<% end %>  
+
+<% content_for :sidebar do
+  render partial: 'edit/sidebar'
+end  %>

@@ -38,8 +38,6 @@ class WorkspaceController < ApplicationController
     rescue Exception => e
       return redirect_to action: :delete_workspace_form, id: @ws.id
     end
-
-
   end
 
   

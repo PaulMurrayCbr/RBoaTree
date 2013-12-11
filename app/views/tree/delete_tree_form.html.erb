@@ -1,0 +1,20 @@
+<% render partial: 'tree/sidebar' %>
+
+<h1>Delete tree</h1>
+
+<p>
+	Delete tree <span class="<%=tree_css(@ws)%>"><%=@t.name%></span> . A tree cannot be deleted if there are any references to any of its nodes from any other tree. This includes nodes that have
+	been "adopted" into workspaces.
+</p>
+
+<% if ! @t.tree? %>
+<p>
+	This tree appears to be "workspace" tree. You can attempt to delete it, but the action will be rejected at the database layer.
+</p>
+<% end %>
+
+<%= form_tag action: :delete_tree_action, class: 'form-inline' do  %>
+<fieldset>
+	<%= submit_tag "Delete", class: 'btn btn-primary'%>
+</fieldset>
+<% end %>
