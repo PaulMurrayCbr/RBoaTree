@@ -1,6 +1,17 @@
 == README
 
-We are not using migrate, because the point of this system is that it's a database thing, not a ruby thing.
+The devleopment environment for this app is a Mac running ruby 2.0 and rails 4..
+
+ ibis@dhcp-128:~/git/rboatree$ uname -a
+ Darwin dhcp-128.anbg.gov.au 11.4.2 Darwin Kernel Version 11.4.2: Thu Aug 23 16:25:48 PDT 2012; root:xnu-1699.32.7~1/RELEASE_X86_64 x86_64
+ ibis@dhcp-128:~/git/rboatree$ ruby --version
+ ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-darwin11]
+ ibis@dhcp-128:~/git/rboatree$ rails --version
+ Rails 4.0.0
+ ibis@dhcp-128:~/git/rboatree$ 
+
+
+We are not using rails migrate, because the point of this system is that the underlying operations are independent of ruby. We have postgres sql queries and stored procedures.
 
 Requirements:
 * postgres running on localhost, port 5432
@@ -10,7 +21,6 @@ Requirements:
 
 Artifacts are put in the 'public' schema of database 'tree'
 
-run db/init - it's a bash script. All it does is runs db/*.sql against postgres on localhost to set up the database.
+run db/init - it's a bash script. All it does is run db/*.sql against postgres on localhost to set up the database.
 
 After that, just rails s
-
