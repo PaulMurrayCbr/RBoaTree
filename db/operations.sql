@@ -415,7 +415,7 @@ $$
 language plpgsql;
   
 
-create or replace function boatree_delete_node(_node_id integer) returns integer as $$
+create or replace function boatree_delete_node(_node_id integer) returns void as $$
 declare 
 	_zz integer;
 	_uri varchar;
@@ -431,7 +431,7 @@ begin
 	if _zz <> 1 
 	then
 		raise exception 'node % not found', _node_id;
-		return null;
+		return;
 	end if;
 	
 	_uri := null;
@@ -439,7 +439,7 @@ begin
 	if _uri is not null
 	then
 		raise exception 'node % is finalised', _node_id;
-		return null;
+		return;
 	end if;
 	
     _zz :=  null;
@@ -447,7 +447,7 @@ begin
 	if _zz <> 0 
 	then
 		raise exception 'node % is a workspace top node', _node_id;
-		return null;
+		return;
 	end if;
 	
 	update tree_node
@@ -458,13 +458,13 @@ begin
 	
 	delete from tree_link where sub_node_id = _node_id;
 	
-	return _boatree_delete_draft_node(_node_id, _ts);
+	perform _boatree_delete_draft_node(_node_id, _ts);
 end 
 $$
 language plpgsql;
 
 
-create or replace function boatree_delete_workspace(_ws_id integer) returns integer as $$
+create or replace function boatree_delete_workspace(_ws_id integer) returns void as $$
 declare 
 	_zz integer;
 begin
@@ -477,19 +477,19 @@ begin
 	if _zz <> 1 
 	then
 		raise exception 'Workspace % not found', _ws_id;
-		return null;
+		return;
 	end if;
 
-	return _boatree_delete_t_or_ws(_ws_id);
+	perform _boatree_delete_t_or_ws(_ws_id);
 end 
 $$
 language plpgsql;
     
-create or replace function boatree_delete_tree(_tree_id integer) returns integer as $$
+create or replace function boatree_delete_tree(_tree_id integer) returns void as $$
 declare 
 	_zz integer;
 begin
-    raise notice 'boatree_delete_workspace(%)', _tree_id;
+    raise notice 'boatree_delete_tree(%)', _tree_id;
 
 	-- check that ws exists
 
@@ -497,16 +497,16 @@ begin
 	select count(*) ct from tree where id = _tree_id and tree_type = 'T' into _zz;
 	if _zz <> 1 
 	then
-		raise exception 'Workspace % not found', _tree_id;
-		return null;
+		raise exception 'Tree % not found', _tree_id;
+		return;
 	end if;
 
-	return _boatree_delete_t_or_ws(_tree_id);
+	perform _boatree_delete_t_or_ws(_tree_id);
 end 
 $$
 language plpgsql;
     
-create or replace function _boatree_delete_t_or_ws(_id integer) returns integer as $$
+create or replace function _boatree_delete_t_or_ws(_id integer) returns void as $$
 declare 
 	_zz integer;
 begin
@@ -530,7 +530,7 @@ begin
 	if _zz <> 0 
 	then
 		raise exception 'Tree/Workspace % has nodes that are linked to from other trees', _id;
-		return null;
+		return;
 	end if;
 
 	-- THIS NEVER HAPPENS. Check that deleting the nodes in this tree will not result in draft nodes
@@ -555,8 +555,8 @@ begin
 	into _zz;
 	if _zz <> 0 
 	then
-		raise exception 'THIS NEVER HAPPENS - deleting workspace % will result in orphaned draft nodes', _id;
-		return null;
+		raise exception 'THIS NEVER HAPPENS - deleting tree/workspace % will result in orphaned draft nodes', _id;
+		return;
 	end if;
 	
 	-----------------------------------------------------
@@ -572,8 +572,6 @@ begin
 	delete from tree_node where tree_id = _id;
 	
 	delete from tree where id = _id;
-	
-	return null;
 end 
 $$
 language plpgsql;
@@ -629,7 +627,7 @@ end
 $$
 language plpgsql;
 
-create or replace function boatree_revert_node(_node_id integer) returns integer as $$
+create or replace function boatree_revert_node(_node_id integer) returns void as $$
 declare 
 	_zz integer;
 	_copy_of integer;
@@ -647,7 +645,7 @@ begin
 	if _zz <> 1 
 	then
 		raise exception 'Draft checked-out node % not found', _node_id;
-		return null;
+		return;
 	end if;
 
 	-- this never happens
@@ -656,7 +654,7 @@ begin
 	if _zz <> 0 
 	then
 		raise exception 'Cannot revert tree root %', _node_id;
-		return null;
+		return;
 	end if;
 
 	-----------------------------------------------------
@@ -686,12 +684,12 @@ begin
 	set updated_at = _ts, sub_node_id = _copy_of_curr
 	where sub_node_id = _node_id and link_type <> 'F';
 	
-	return _boatree_delete_draft_node(_node_id, _ts);
+	perform _boatree_delete_draft_node(_node_id, _ts);
 end 
 $$
 language plpgsql;
 
-create or replace function _boatree_delete_draft_node(_node_id integer, _ts timestamp without time zone) returns integer as $$
+create or replace function _boatree_delete_draft_node(_node_id integer, _ts timestamp without time zone) returns void as $$
 begin
 	-----------------------------------------------------
 	-- END OF CHECKS, BEGINNING OF OPERATIONS  
@@ -734,8 +732,6 @@ begin
 	
 	-- this would fail if our draft tree contains diamonds, if not for the extra checks in the nodes query
 	delete from tree_node where id in ( select id from nodes);
-	
-	return null;
 end 
 $$
 language plpgsql;
