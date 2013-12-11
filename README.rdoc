@@ -1,14 +1,15 @@
 == README
 
-The devleopment environment for this app is a Mac running ruby 2.0 and rails 4..
+The devleopment environment for this app is a Mac running ruby 2.0 and rails 4, Postgres 9.3.
 
- ibis@dhcp-128:~/git/rboatree$ uname -a
- Darwin dhcp-128.anbg.gov.au 11.4.2 Darwin Kernel Version 11.4.2: Thu Aug 23 16:25:48 PDT 2012; root:xnu-1699.32.7~1/RELEASE_X86_64 x86_64
- ibis@dhcp-128:~/git/rboatree$ ruby --version
+ $ uname -a
+ Darwin Kernel Version 11.4.2: Thu Aug 23 16:25:48 PDT 2012; root:xnu-1699.32.7~1/RELEASE_X86_64 x86_64
+ $ ruby --version
  ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-darwin11]
- ibis@dhcp-128:~/git/rboatree$ rails --version
+ $ rails --version
  Rails 4.0.0
- ibis@dhcp-128:~/git/rboatree$ 
+ $ postgres --version
+ postgres (PostgreSQL) 9.3.1
 
 
 We are not using rails migrate, because the point of this system is that the underlying operations are independent of ruby. We have postgres sql queries and stored procedures.
