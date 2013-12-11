@@ -450,6 +450,14 @@ begin
 		return null;
 	end if;
 	
+	update tree_node
+	set updated_at = _ts
+	where id in (
+		select super_node_id from tree_link where sub_node_id = _node_id
+	);
+	
+	delete from tree_link where sub_node_id = _node_id;
+	
 	return _boatree_delete_draft_node(_node_id, _ts);
 end 
 $$
@@ -625,6 +633,7 @@ create or replace function boatree_revert_node(_node_id integer) returns integer
 declare 
 	_zz integer;
 	_copy_of integer;
+	_copy_of_curr integer;
 	_ts timestamp without time zone;
 begin
 	_ts := localtimestamp;
@@ -656,6 +665,13 @@ begin
 	
 	select prev_node_id from tree_node where id = _node_id into _copy_of;
 	
+	with recursive curr as (
+		select tree_node.id, tree_node.next_node_id from tree_node where id = _copy_of
+		union all
+		select tree_node.id, tree_node.next_node_id from tree_node, curr where curr.next_node_id is not null and tree_node.id = curr.next_node_id
+	)
+	select id from curr where next_node_id is null into _copy_of_curr;
+	
 	update tree_node
 	set updated_at = _ts
 	where id in (
@@ -664,7 +680,11 @@ begin
 	
 	update tree_link
 	set updated_at = _ts, sub_node_id = _copy_of
-	where sub_node_id = _node_id;
+	where sub_node_id = _node_id and link_type = 'F';
+	
+	update tree_link
+	set updated_at = _ts, sub_node_id = _copy_of_curr
+	where sub_node_id = _node_id and link_type <> 'F';
 	
 	return _boatree_delete_draft_node(_node_id, _ts);
 end 
@@ -703,10 +723,9 @@ begin
 			select externallinks.sub_node_id as id from externallinks
 			union all
 			select tree_link.sub_node_id as id
-				from externallinksubtree, tree_link, tree_node
+				from externallinksubtree, tree_link, n
 				where externallinksubtree.id = tree_link.super_node_id
-				and tree_link.sub_node_id = tree_node.id
-				and tree_node.uri is null -- not strictly necessary, but limits recursion to the interesting bit
+				and tree_link.sub_node_id = n.id -- clip the search at ununteresting nodes
 		)
 		select id from n where n.id not in (select id from externallinksubtree)
 	) n;

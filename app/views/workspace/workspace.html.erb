@@ -12,10 +12,6 @@
 </p>
 </div>
 
-<% @ws.node.subnode_link.each do | l | %>
-	<span class="<%=link_css(l)%>"><%= render inline: link_symbol(l)%></span>
-	<%= render partial: 'node/node', object: l.subnode %>
-	<br/>
-<% end %>
+<%= render partial: 'node/tree_structure', locals: {node: @ws.node, depth: 99}%>
 
 <%= render partial: "edit/sql_results" %>
