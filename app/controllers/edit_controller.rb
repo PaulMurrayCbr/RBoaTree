@@ -126,13 +126,13 @@ class EditController < ApplicationController
   end
   
   def generate_sample_data
-    tree = Tree.create(name: 'AFD Sample', tree_type: 'T')
+    tree = Tree.create(name: 'AFD', tree_type: 'T')
     tree.save;
-    top = TreeNode.create(name: 'AFD Sample [TOP]', uri: 'http://example.org/tree#AFDTreeSample', tree_id: tree.id)
+    top = TreeNode.create(name: 'AFD [TOP]', uri: 'http://example.org/tree#AFDTreeSample', tree_id: tree.id)
     top.save;
     tree.node = top;
     tree.save;
-    root = TreeNode.create(name: 'AFD Sample [ROOT]', uri: 'http://example.org/node/AFD#Root', tree_id: tree.id)
+    root = TreeNode.create(name: 'AFD [ROOT]', uri: 'http://example.org/node/AFD#Root', tree_id: tree.id)
     root.save
     l = TreeLink.create(super_node_id: top.id, sub_node_id: root.id, link_type: 'T')
     l.save
@@ -149,13 +149,13 @@ class EditController < ApplicationController
     n5 = makesamplenode(n4, 'Tachyglossus aculeatus multiaculeatus')
     n5 = makesamplenode(n4, 'Tachyglossus aculeatus setosus')
     
-    tree = Tree.create(name: 'APC Sample', tree_type: 'T')
+    tree = Tree.create(name: 'APC', tree_type: 'T')
     tree.save;
-    top = TreeNode.create(name: 'APC Sample [TOP]', uri: 'http://example.org/tree#APCTreeSample', tree_id: tree.id)
+    top = TreeNode.create(name: 'APC [TOP]', uri: 'http://example.org/tree#APCTreeSample', tree_id: tree.id)
     top.save;
     tree.node = top;
     tree.save;
-    root = TreeNode.create(name: 'APC Sample [ROOT]', uri: 'http://example.org/node/APC#Root', tree_id: tree.id)
+    root = TreeNode.create(name: 'APC [ROOT]', uri: 'http://example.org/node/APC#Root', tree_id: tree.id)
     root.save
     l = TreeLink.create(super_node_id: top.id, sub_node_id: root.id, link_type: 'T')
     l.save

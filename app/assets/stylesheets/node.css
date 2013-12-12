@@ -8,19 +8,21 @@
 .node-workspace-top { text-decoration: underline; }
 .node-tree-top { text-decoration: underline; }
 
-.node-draft { color: maroon; }
+.node-draft { color: #802020; }
+.node-final { color: #202080; }
+
 .node-published { font-weight: bold; }
 .node-unpublished {  }
 
 .node-replaced { text-decoration: line-through; }
 
 .tree-nil { font-weight: bold; color: #666666; }
-.tree-workspace { color: maroon; }
-.tree-tree {  }
+.tree-workspace { color: #802020;  }
+.tree-tree {  color: #202080; }
 
 .node-tree-structure-block { }
 .node-tree-structure-node { }
-.node-tree-structure-subnodes { margin-left: 2em;}
+.node-tree-structure-subnodes { margin-left: 1em;}
 
 
 a .node:hover { } 
