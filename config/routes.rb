@@ -47,6 +47,8 @@ Rboatree::Application.routes.draw do
 
   get 'node/:id' => 'node#node'
 
+  get 'versioning/about' => 'versioning#about'
+  get 'versioning' => 'versioning#index'
 
   
   # The priority is based upon order of creation: first created -> highest priority.

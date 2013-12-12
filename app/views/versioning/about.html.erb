@@ -1,0 +1,59 @@
+<% content_for :sidebar do
+  render partial: 'versioning/sidebar'
+end %>
+
+<h1>About Versioning</h1>
+
+<p>
+	Versioning is key to the process of curating the trees in the data structure. Once a tree node has been finalised - assigned its URI - that node never changes (with one exception). That is, arrangments of
+	nodes, once finalised, do not change. Updating and maintaining the tree is a matter of replacing old nodes with new ones in a managed way.
+</p>
+<p>
+	In versioning, a <u>current</u> node may be <u>replaced</u> by another <u>current</u> node. When this is done, any nodes that have that node as a subnode <u>via a versioning link</u> are also versioned - the node is copied, and the
+	links to the subnodes updated.
+</p>
+<p>
+	Generally speaking, trees of nodes are linked together with versioning links. This means that when a node in a tree is versioned, then ultimately a new root node, with a new URI is created. 
+</p>
+<p>
+	In the context of biological taxonomy: nodes in this tree do not represent taxa, but classifications and subclassifications - <em>arrangements</em> of taxa.
+	If any part of a classification is rearranged - a genus moved to a new familiy, for instance - then the arrangment of any supertaxon - eg, the order those families are in -
+	<em>is no longer the same</em>. BoaTree reflects this
+	by creating a new node with a new URI for the new arrangment of that order (and so on).
+</p>
+<p>
+	Points to note
+	<ul>
+		<li>
+			Nodes in a draft state are treated specially. If a darft node links to a final node with a versioning link, and that final node is updated, then the draft link is simply moved along as if it were a tracking link.
+		</li>
+		<li>
+			If a tree links to a node in a different tree via a versioning link, and that other tree is versioned, then the linking tree will be versioned, too. In effect, using a versioning link to another tree gives the curator of that other
+			tree permission to update your tree. For this reason, when a tree is made of parts of other trees, you would often use <u>fixed</u> links.
+		</li>
+		<li>
+			The exception to the rule that finalised nodes never change is that
+			tracking links are always updated. That is - the subnode of a tracking link is always a current node. Conceptually,
+			the nodes linked to via tracking links indicate some sort of "current" state - they are not part of the <em>identity</em> of the node. We use tracking links to link tree top nodes to their current roots. They may also have
+			applications for attaching bookmarks to nodes, and for attaching profile data which is periodically updated to taxa.
+		</li>
+	</ul>
+</p>
+<p>
+	The key to the BoaTree system is that <strong>multiple nodes may be versioned as a single operation</strong>. The only rules are:
+	<ol>
+		<li>
+			Versioning is only performed on current, final nodes.
+		</li>
+		<li>
+			A node may not be replaced by a node which itself is being replaced as part of the operation.
+		</li>
+	</ol>
+	These rules suffice to ensure that loops do not form, that our trees remain tree-like, that the data set remains in a valid state.
+</p>
+<p>
+	In the edit section of this demponstration app, the details of versioning are concelead - the "apply" operation performs a versioning on all checked-out nodes in a draft tree. Using the form available in this part
+	of this demonstration application, you can perform versioning of any complexity that is valid to do. Your operation may or may not make sense from a data standpoint, but it will not break database consistency.
+</p>
+
+<%= render partial: "edit/sql_results" %>
