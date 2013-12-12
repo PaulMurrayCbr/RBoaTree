@@ -1,6 +1,6 @@
 <% render partial: 'workspace/sidebar' %>
 
-<h1>Workspace: <span class="<%=tree_css(@ws)%>"><%=@ws.name%></span></h1>
+<h1>Workspace: <%= render partial:'tree/tree', object: @ws %></h1>
 
 <% if @ws.node.subnode_link.empty? %>
 	<div class="muted">This workspace is empty.</div>
@@ -11,6 +11,8 @@
 	To add or remove items from the workspace, add or remove items from its <%= link_to 'top node', controller: :node, action: :node, id: @ws.node.id %>.
 </p>
 </div>
+
+<h3>Current</h3>
 
 <%= render partial: 'node/tree_structure', locals: {node: @ws.node, depth: 99}%>
 
