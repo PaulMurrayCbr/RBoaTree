@@ -99,6 +99,8 @@ module BoatreeSql
     Squirm.use(ActiveRecord::Base.connection.raw_connection) do
       begin
         r.result = db_raw_call proc, *args
+        todo 'remove full validation check'
+        db_raw_call :boatree_check_valid # after every single data manipulation, we run the full validation suite
         r.ok!
       rescue PG::RaiseException => e
         r.result = e.message

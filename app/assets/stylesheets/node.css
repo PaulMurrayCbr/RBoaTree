@@ -1,23 +1,26 @@
-.node { font-family: monospace; }
-.tree {}
+.node { font-family: monospace; color: #333333; }
+.tree { font-family: monospace; color: #333333; }
 
 
-.node-nil { font-weight: bold; color: darkgray; }
-.node-end { font-weight: bold; color: darkgray; }
+.node-nil { font-weight: bold; color: #666666; }
+.node-end { font-weight: bold; color: #666666; }
 
 .node-workspace-top { text-decoration: underline; }
 .node-tree-top { text-decoration: underline; }
 
-.node-draft { color: darkred; }
+.node-draft { color: maroon; }
 .node-published { font-weight: bold; }
 .node-unpublished {  }
 
-.node-replaced { text-decoration: strikethrough; }
+.node-replaced { text-decoration: line-through; }
 
-.tree-nil { font-weight: bold; color: darkgray; }
-.tree-workspace { color: darkred; }
+.tree-nil { font-weight: bold; color: #666666; }
+.tree-workspace { color: maroon; }
 .tree-tree {  }
 
 .node-tree-structure-block { }
 .node-tree-structure-node { }
 .node-tree-structure-subnodes { margin-left: 2em;}
+
+
+a .node:hover { } 

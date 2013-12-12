@@ -14,7 +14,6 @@ class ValidateDataController < ApplicationController
 
     Squirm.use(ActiveRecord::Base.connection.raw_connection) do
       begin
-        results = ActiveRecord::Base.connection.execute('discard temp')
         db_raw_call 'boatree_validate_create_results_table'
         db_raw_call 'boatree_validate_all'
         results = ActiveRecord::Base.connection.execute('select * from validation_results order by id')

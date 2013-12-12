@@ -3,7 +3,7 @@ module FlashHelper
   include MsgHelper
   
   def todo(msg) 
-    mm.info 'TODO', msg
+    mm.info 'TODO', "#{msg} @ #{caller[0].to_s}"
   end  
 
   def ok(msg, extra=nil) 
