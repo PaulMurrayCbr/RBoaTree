@@ -141,12 +141,14 @@ begin
 	  -- boatree columns
 	  name,
 	  tree_id,
+	  prev_node_id,
 	  uri
 	)
 	select
 		v.new_node_id,
 		_ts, _ts,
-		n.name, n.tree_id, 'http://example.org/boatree/node#' || v.new_node_id
+		n.name, n.tree_id, n.id,
+		'http://example.org/boatree/node#' || v.new_node_id
 	from
 		new_versioning_nodes v, tree_node n
 		where v.curr_node_id = n.id;
@@ -168,9 +170,9 @@ begin
 	)
 	select
 		_ts, _ts,
-		avn.new_node_id, l.sub_node_id, l.link_type 
-	from all_versioning_nodes avn, tree_link l
-	where avn.curr_node_id = l.super_node_id;
+		nvn.new_node_id, l.sub_node_id, l.link_type 
+	from new_versioning_nodes nvn, tree_link l
+	where nvn.curr_node_id = l.super_node_id;
 	
 	-- ok. this next bit turns all the nodes to be versioned into old nodes.
 	
