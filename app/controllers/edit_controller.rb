@@ -34,6 +34,9 @@ class EditController < ApplicationController
 
     begin
       boatree_clear
+      
+      generate_sample_data
+      
     rescue
       return redirect_to action: :clear_tree_form
     end
@@ -120,6 +123,71 @@ class EditController < ApplicationController
 
   def setup_sidebar
 
+  end
+  
+  def generate_sample_data
+    tree = Tree.create(name: 'AFD Sample', tree_type: 'T')
+    tree.save;
+    top = TreeNode.create(name: 'AFD Sample [TOP]', uri: 'http://example.org/tree#AFDTreeSample', tree_id: tree.id)
+    top.save;
+    tree.node = top;
+    tree.save;
+    root = TreeNode.create(name: 'AFD Sample [ROOT]', uri: 'http://example.org/node/AFD#Root', tree_id: tree.id)
+    root.save
+    l = TreeLink.create(super_node_id: top.id, sub_node_id: root.id, link_type: 'T')
+    l.save
+    
+    n1 = makesamplenode(root, 'MONOTREMATA')
+    n2 = makesamplenode(n1, 'ORNITHORHYNCHIDAE')
+    n3 = makesamplenode(n2, 'Ornithorhynchus')
+    n4 = makesamplenode(n3, 'Ornithorhynchus anatinus')
+    n2 = makesamplenode(n1, 'TACHYGLOSSIDAE')
+    n3 = makesamplenode(n2, 'Tachyglossus')
+    n4 = makesamplenode(n3, 'Tachyglossus aculeatus')
+    n5 = makesamplenode(n4, 'Tachyglossus aculeatus acanthion')
+    n5 = makesamplenode(n4, 'Tachyglossus aculeatus aculeatus')
+    n5 = makesamplenode(n4, 'Tachyglossus aculeatus multiaculeatus')
+    n5 = makesamplenode(n4, 'Tachyglossus aculeatus setosus')
+    
+    tree = Tree.create(name: 'APC Sample', tree_type: 'T')
+    tree.save;
+    top = TreeNode.create(name: 'APC Sample [TOP]', uri: 'http://example.org/tree#APCTreeSample', tree_id: tree.id)
+    top.save;
+    tree.node = top;
+    tree.save;
+    root = TreeNode.create(name: 'APC Sample [ROOT]', uri: 'http://example.org/node/APC#Root', tree_id: tree.id)
+    root.save
+    l = TreeLink.create(super_node_id: top.id, sub_node_id: root.id, link_type: 'T')
+    l.save
+
+    n1 = makesamplenode(root, 'Doodia')
+    n2 = makesamplenode(n1, 'Doodia aspera')
+    n3 = makesamplenode(n2, 'Doodia aspera var. media')
+    n2 = makesamplenode(n1, 'Doodia australis')
+    n2 = makesamplenode(n1, 'Doodia caudata')
+    n2 = makesamplenode(n1, 'Doodia dissecta')
+    n2 = makesamplenode(n1, 'Doodia heterophylla')
+    n2 = makesamplenode(n1, 'Doodia hindii')
+    n2 = makesamplenode(n1, 'Doodia linearis')
+    n2 = makesamplenode(n1, 'Doodia maxima')
+    n2 = makesamplenode(n1, 'Doodia media')
+
+    n1 = makesamplenode(root, 'Pteridoblechnum')
+    n2 = makesamplenode(n1, 'Pteridoblechnum acuminatum')
+    n2 = makesamplenode(n1, 'Pteridoblechnum neglectum')
+
+    n1 = makesamplenode(root, 'Stenochlaena')
+    n2 = makesamplenode(n1, 'Stenochlaena palustris')
+  end
+
+  def makesamplenode(n, name)
+    nn = TreeNode.create(name: name, uri: 'temp', tree_id: n.tree.id)
+    nn.save
+    nn.uri = "http://example.org/node/AFD#{nn.id}" 
+    nn.save
+    l = TreeLink.create(super_node_id: n.id, sub_node_id: nn.id, link_type: 'V')
+    l.save
+    return nn
   end
 
 end
