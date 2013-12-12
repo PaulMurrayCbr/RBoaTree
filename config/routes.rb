@@ -48,6 +48,10 @@ Rboatree::Application.routes.draw do
   get 'node/:id' => 'node#node'
 
   get 'versioning/about' => 'versioning#about'
+  post 'versioning/add-target' => 'versioning#add_target_action'
+  get 'versioning/remove-target/:id' => 'versioning#remove_target_action'
+  get 'versioning/perform-versioning' => 'versioning#perform_versioning_action'
+  get 'versioning/clear' => 'versioning#clear_all_action'
   get 'versioning' => 'versioning#index'
 
   

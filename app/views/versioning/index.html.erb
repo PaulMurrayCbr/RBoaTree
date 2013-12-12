@@ -4,4 +4,31 @@ end %>
 
 <h1>Versioning</h1>
 
+<%= form_tag action: :add_target_action, class: 'form-inline' do  %>
+<table>
+	<tr><th>Current Node</th><th>Replacement</th></tr>
+	<% @state.each do | s | %>
+		
+	<tr><td><%= s[:node] ? ( render partial: 'node/node', object: s[:node] ) : "Node #{s[:node_id]} not found" %></td>
+		<td><%= s[:replacement] ? ( render partial: 'node/node', object: s[:replacement] ) : "Node #{s[:replacement_id]} not found" %></td>
+		<td><%= link_to 'remove', action: :remove_target_action, id: s[:node_id] %></td>
+	</tr>	
+		
+	<% end %>
+	
+	<tr><td colspan="4"  class="muted">Nodes must be entered as id numbers. You may find it helpful to open multiple browser windows to display trees.</tr>
+	
+	<tr>
+	<td><%= text_field_tag :node, nil, placeholder: 'id', class: 'input-mini' %></td>
+	<td><%= text_field_tag :replacement, nil, class: 'short', placeholder: 'id', class: 'input-mini' %></td>
+	<td><%= submit_tag "Add", class: 'btn '%></td>
+	</tr>
+</table>
+
+<% end %>
+
+<%= link_to 'Perform Versioning', {action: :perform_versioning_action}, {class: 'btn btn-primary'} %>
+
+<%= link_to 'Clear', {action: :clear_all_action}, {class: 'btn' } %>
+
 <%= render partial: "edit/sql_results" %>

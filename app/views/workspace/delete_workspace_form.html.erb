@@ -3,7 +3,7 @@
 <h1>Delete workspace</h1>
 
 <p>
-	Delete workspace <span class="<%=tree_css(@ws)%>"><%=@ws.name%></span> . All draft work will be discarded.
+	Delete workspace <%= render partial: 'tree/tree', object: @ws %> . All draft work will be discarded.
 </p>
 
 <% if ! @ws.workspace? %>

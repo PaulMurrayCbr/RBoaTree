@@ -3,7 +3,7 @@
 <h1>Delete tree</h1>
 
 <p>
-	Delete tree <span class="<%=tree_css(@t)%>"><%=@t.name%></span> . A tree cannot be deleted if there are any references to any of its nodes from any other tree. This includes nodes that have
+	Delete tree <%= render partial: 'tree/tree', object: @t %> . A tree cannot be deleted if there are any references to any of its nodes from any other tree. This includes nodes that have
 	been "adopted" into workspaces.
 </p>
 

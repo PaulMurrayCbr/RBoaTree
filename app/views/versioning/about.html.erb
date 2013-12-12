@@ -49,7 +49,7 @@ end %>
 			A node may not be replaced by a node which itself is being replaced as part of the operation.
 		</li>
 	</ol>
-	These rules suffice to ensure that loops do not form, that our trees remain tree-like, that the data set remains in a valid state.
+	These rules suffice to ensure that loops do not form, that our trees remain tree-like, that the data set remains in a valid state - with the exception that versioning may produce orphaned nodes.
 </p>
 <p>
 	In the edit section of this demponstration app, the details of versioning are concelead - the "apply" operation performs a versioning on all checked-out nodes in a draft tree. Using the form available in this part

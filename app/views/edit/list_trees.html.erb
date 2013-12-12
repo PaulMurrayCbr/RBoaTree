@@ -12,7 +12,7 @@ end  %>
 <ul>
 	<% @list.each do |t| %>
 	<li>
-		<span class="<%=tree_css(t)%>"><%=t.name%></span> <%= link_to "[#{t.id}]", controller: :tree, action: :tree, id: t.id %></span>
+		<%= render partial: 'tree/tree', object: t %>
 	</li>
 	<% end %>
 </ul>

@@ -1,8 +1,6 @@
 =begin
 This class holds the SQL that performs transformations on the boatree data structure.
-The idea is that *All* transformations on the data are *only* done here. Ruby activerecord is not used anywhere
-to write to the database.
- 
+The idea is that *All* transformations on the data are *only* done here. 
 =end
 
 module BoatreeOperations
@@ -106,4 +104,25 @@ module BoatreeOperations
       return nil
     end
   end
+  
+=begin
+  Versioning is a bit of a mix, owing to the fact that to pass the stored procedure an array of node id pairs.
+  
+  To manage this, we create a postgres temporary table and populate it, then invoke the versioning procedure. The interaction
+  is limited to three stored procedures: versioning_init, versioning_add, and versioning_exec. 
+=end
+
+  def boatree_perform_versioning(node_replacements) 
+   db_perform do
+    Squirm.use(ActiveRecord::Base.connection.raw_connection) do
+      Squirm.procedure(:boatree_versioning_init).call()
+      proc_add = Squirm.procedure(:boatree_versioning_add)
+      node_replacements.each_pair do | node_id, replacement_node_id |
+        proc_add.call(node_id, replacement_node_id)
+      end
+      Squirm.procedure(:boatree_versioning_exec).call()
+    end
+   end 
+  end
+  
 end

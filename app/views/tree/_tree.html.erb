@@ -1,5 +1,9 @@
-<% if tree.nil? %>
+<% if ! defined? tree %>
 	<span class='<%=tree_css(nil)%>'>--NIL--</span>
+<% elsif tree.nil? %>
+	<span class='<%=tree_css(nil)%>'>--NIL--</span>
+<% elsif tree.end? %>
+	<span class='<%=tree_css(tree)%>'><%="#{tree.name}"%></span>
 <% else %>
 <%= link_to "#{tree.name}[#{tree.tree? ? 't': 'w'}#{tree.id}]", {controller: tree.tree? ? :tree : :workspace, action: tree.tree? ? :tree : :workspace, id: tree.id}, {class: tree_css(tree) } %>
 <% end %>	
