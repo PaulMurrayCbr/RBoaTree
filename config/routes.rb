@@ -46,6 +46,8 @@ Rboatree::Application.routes.draw do
   get 'node/:id/delete-node-form' => 'node#delete_node_form'
   post 'node/:id/delete-node-action' => 'node#delete_node_action'
 
+  get 'node/:id/publicise' => 'node#publicise_node_form'
+
   get 'node/:id' => 'node#node'
 
   get 'versioning/about' => 'versioning#about'

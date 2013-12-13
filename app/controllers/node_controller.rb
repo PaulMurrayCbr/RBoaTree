@@ -255,6 +255,15 @@ class NodeController < ApplicationController
     end
   end
 
+  # perhaps this belongs in an import/export controller
+  def publicise_node_form
+    getnode params
+    if !@n 
+      redirect_to controller: :edit, action: :index
+      return
+    end
+    
+  end
 
 
   private
