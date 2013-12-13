@@ -103,35 +103,54 @@ begin
 	-- as per the discussion at http://paulmurraywork.wordpress.com/2013/12/13/ever-had-one-of-those-moments/
 	-- this check manages tracking links
 	
+	-- TODO!! Nope, this is wrong, too. It's - any node that is being versoned, or any supernode of any node that is 
+	-- tracking a node being versioned
+	
+	-- ok. first we check the simple vase
+	
+	_zz := null;
+	select count(1)
+		from versioning_nodes vn, all_versioning_nodes avn 
+		where vn.new_node_id = avn.curr_node_id
+		into _zz;
+	if _zz <> 0 then
+		raise exception 'Replacement nodes may not be nodes that will be versioned';
+	end if;
+	
+	
+	-- next, the nasty bit. go up the tree looking for a tracking link. Skip chains that have a fixed link. 
+	-- anything after that tracking link is not to be used
+	
+	-- the first part of this search is already done - it's in all versioning nodes. So we just need to look for tracking links
+	
 	_zz := null;
 	with recursive n as (
-		select vn.curr_node_id as id from versioning_nodes vn
-		union all
+		-- get all nodes tracking any nodes being versioned
 		select tree_link.super_node_id as id
-		from n, tree_node, tree_link
-		where n.id = tree_link.sub_node_id
-		and tree_link.super_node_id = tree_node.id
-		and tree_link.link_type <> 'F'
-		and tree_node.uri is not null
-		and tree_node.next_node_id is null
+			from all_versioning_nodes avn, tree_link, tree_node
+			where 
+				avn.curr_node_id = tree_link.sub_node_id
+				and tree_link.link_type = 'T'
+				and tree_node.id = tree_link.super_node_id
+				and tree_node.uri is not null
+				and tree_node.next_node_id is not null
+		union all
+		-- and get all their supernodes
+		select tree_link.super_node_id as id
+			from n, tree_node, tree_link
+			where 
+				n.id = tree_link.sub_node_id
+			and tree_link.super_node_id = tree_node.id
+			and tree_node.uri is not null
+			and tree_node.next_node_id is null
 	)
 	select count(*)
 	from versioning_nodes vn, n 
 	where vn.new_node_id = n.id
 	into _zz;
 	if _zz <> 0 then
-		raise exception 'Replacement nodes may not be nodes that are part of the versioning process or supernodes';
+		raise exception 'Replacement nodes may not be nodes that are tracking nodes that will be versioned or their supernodes';
 	end if;
-	
-	-- I THINK I MIGHT BE MISSING SOMETHING: what if a replacement node is a supernode, but is attached by a tracking link?
-	-- will that cause a loop?
-	-- this is a TODO - this comment needs to be resolved one way or the other
-	-- for now I'll continue on.
-	
-	-- update - yes, this is a problem. Do we prohibit any supernode? What about if it uses a fixed link?
-	
-	-- oh well. To contuinbue:
-
 	
 	----------------------------
 	-- START OF OPERATIONS

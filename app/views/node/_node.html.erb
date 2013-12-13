@@ -1,12 +1,12 @@
 <% if ! defined? node %>
-	<span class='<%=node_css(nil)%>'>--NIL--</span>
+<span class='<%=node_css(nil)%>'><%=render partial:'node/nodename', object: node%></span>
 <% elsif node.nil? %>
-	<span class='<%=node_css(nil)%>'>--NIL--</span>
+<span class='<%=node_css(nil)%>'><%=render partial:'node/nodename', object: node%></span>
 <% elsif node.end? %>
-	<span class='<%=node_css(node)%>'><%="#{node.name}"%></span>
+<span class='<%=node_css(node)%>'><%=render partial:'node/nodename', object: node%></span>
 <% else %>
-	<%= link_to "\u2190", controller: :node, action: :node, id: node.prev_node_id if node.prev_node_id %><%=
-	 link_to "#{node.name}[n#{node.id}]", {controller: :node, action: :node, id: node.id}, {class: node_css(node) } %><%=
-	link_to "\u2192", controller: :node, action: :node, id: node.next_node_id if node.next_node_id %>/<%=
-	render partial:'tree/tree', object: node.tree %>
+<%= link_to "\u2190", controller: :node, action: :node, id: node.prev_node_id if node.prev_node_id %><%=
+	 link_to ( render partial:'node/nodename', object: node), {controller: :node, action: :node, id: node.id}, {class: node_css(node) } %><sup><%=
+	render partial:'tree/tree', object: node.tree %></sup><%=
+	link_to "\u2192", controller: :node, action: :node, id: node.next_node_id if node.next_node_id %>
 <% end %>

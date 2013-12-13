@@ -1,0 +1,8 @@
+<% if ! defined? treename %>
+--NIL--
+<% elsif treename.nil? %>
+--NIL--
+<% elsif treename.end? %>
+<%=treename.name%>
+<% else %>
+<%=treename.name%><% end %>	

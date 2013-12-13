@@ -1,0 +1,8 @@
+<% if ! defined? nodename %>
+--NIL--
+<% elsif nodename.nil? %>
+--NIL--
+<% elsif nodename.end? %>
+<%="#{node.name}"%>
+<% else %>
+<%=nodename.name%><sub><%=nodename.id%></sub><%end%>
