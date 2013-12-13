@@ -49,6 +49,7 @@ class VersioningController < ApplicationController
   def perform_versioning_action
     begin
       boatree_perform_versioning vals
+      info 'Versioning has been perfromed. Clear this form before versioning again.'
     rescue
     end
 
