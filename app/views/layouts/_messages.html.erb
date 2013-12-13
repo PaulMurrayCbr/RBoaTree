@@ -3,7 +3,7 @@
 if flash[:message]
   flash[:message].each do | msg |
   %>
-    <div class="alert alert-<%= msg.alertcss %>">
+    <div class="messages-alert  alert-<%= msg.alertcss %> messages-alert">
 	  <button type="button" class="close" data-dismiss="alert">&times;</button>
       <% if msg.extra %>
         <strong><%= msg.msg %></strong> <%= msg.extra %>

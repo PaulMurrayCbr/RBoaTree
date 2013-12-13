@@ -100,13 +100,27 @@ begin
 	
 	-- another integrity check: you may not use a node which is being versioned as a replacement node
 	
+	-- as per the discussion at http://paulmurraywork.wordpress.com/2013/12/13/ever-had-one-of-those-moments/
+	-- this check manages tracking links
+	
 	_zz := null;
+	with recursive n as (
+		select vn.curr_node_id as id from versioning_nodes vn
+		union all
+		select tree_link.super_node_id as id
+		from n, tree_node, tree_link
+		where n.id = tree_link.sub_node_id
+		and tree_link.super_node_id = tree_node.id
+		and tree_link.link_type <> 'F'
+		and tree_node.uri is not null
+		and tree_node.next_node_id is null
+	)
 	select count(*)
-	from versioning_nodes vn, all_versioning_nodes avn
-	where vn.new_node_id = avn.curr_node_id
+	from versioning_nodes vn, n 
+	where vn.new_node_id = n.id
 	into _zz;
 	if _zz <> 0 then
-		raise exception 'A node being versioned cannot be used as a replacement node';
+		raise exception 'Replacement nodes may not be nodes that are part of the versioning process or supernodes';
 	end if;
 	
 	-- I THINK I MIGHT BE MISSING SOMETHING: what if a replacement node is a supernode, but is attached by a tracking link?

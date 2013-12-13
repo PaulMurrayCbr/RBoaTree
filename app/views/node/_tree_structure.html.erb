@@ -8,7 +8,7 @@
 		</div>
 		<% if depth > 0 && node && !node.subnode_link.empty?%>	
 			<div class='node-tree-structure-subnodes'>
-				<% node.subnode_link.each do | l | %>
+				<% node.subnode_link.sort{|a,b|a.subnode.name<=>b.subnode.name}.each do | l | %>
 					<%= render partial: 'node/tree_structure', locals: { depth: depth-1, link: l, node: l.subnode } %>
 				<% end %>
 			</div>

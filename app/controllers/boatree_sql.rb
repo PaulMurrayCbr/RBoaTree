@@ -67,7 +67,6 @@ module BoatreeSql
   # perform a block inside a transaction
 
   def db_perform(&block)
-    t = Time.now
     begin
       ActiveRecord::Base.transaction do
         return block.call
@@ -75,8 +74,6 @@ module BoatreeSql
     rescue Exception => e
       exception e
       raise e
-    ensure
-      info 'Time:', "#{((Time.now - t) * 1000).to_i}ms"
     end
   end
 
@@ -99,8 +96,6 @@ module BoatreeSql
     Squirm.use(ActiveRecord::Base.connection.raw_connection) do
       begin
         r.result = Squirm.procedure(proc).call(*args)
-        todo 'remove full validation check'
-        r.result = Squirm.procedure(:boatree_check_valid).call()
         r.ok!
       rescue PG::RaiseException => e
         r.result = e.message

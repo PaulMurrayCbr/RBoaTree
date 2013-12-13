@@ -103,6 +103,8 @@ class EditController < ApplicationController
     if !workspace_id
       return redirect_to action: :create_workspace_form
     end
+    
+    puts "redirect_to controller: :workspace, action: :workspace, id: #{workspace_id}"
 
     redirect_to controller: :workspace, action: :workspace, id: workspace_id
   end
