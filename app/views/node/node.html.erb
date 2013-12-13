@@ -55,8 +55,8 @@
 	</p>
 </div>
 
-<div>
-	<h3>Node usage</h3>
+<% if !@placements.empty? %>
+<div><h3>Node usage</h3>
 	<% @placements.each do | k, v | %>
 		<div>
 			<% v.each do | nugget | %>
@@ -72,20 +72,20 @@
 				</div>
 			<% end %>
 		</div>
-	<% end %>
-	
+<% end %>
 </div>
+<% end %>
 
-<% if !@n.replacement_of.empty? %>
+<% if !@n.merges.empty? %>
 <div><h3>Merges</h3></div>
-<% @n.replacement_of.each do | nn| %>
+<% @n.merges.each do | nn| %>
 <%= render partial: "node/node", object: nn %>
 <% end %>
 <% end %>
 
-<% if !@n.copies.empty? %>
+<% if !@n.branches.empty? %>
 <div><h3>Branches</h3></div>
-<% @n.copies.each do | nn| %>
+<% @n.branches.each do | nn| %>
 <%= render partial: "node/node", object: nn %>
 <% end %>
 <% end %>
@@ -94,22 +94,7 @@
 	<h3>Tree structure</h3>
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span1" style="font-size: 80%;">
-				<h5>Older versions</h5>
-				<%
-					nn = @n.copy_of
-					nn = nn.copy_of if nn
-					while nn
-						
-				%>
-						<div><%= render partial:'node/node', object:nn %></div>
-				<%
-						nn = nn.copy_of
-					end
-					
-				%>
-			</div>				
-			<div class="span3">
+			<div class="span4">
 				<!-- These are listed 99 deep for development purposes -->
 				<h5>Previous version</h5>
 	<%= render partial: 'node/tree_structure', locals: {node: @n.copy_of, depth: 99}%>
@@ -118,27 +103,36 @@
 				<h5>This version</h5>
 	<%= render partial: 'node/tree_structure', locals: {node: @n, depth: 99}%>
 			</div>
-			<div class="span3">
+			<div class="span4">
 				<h5>Replacement version</h5>
 	<%= render partial: 'node/tree_structure', locals: {node: @n.replacement, depth: 99}%>
 			</div>
-			<div class="span1" style="font-size: 80%;">
-				<h5>Later versions</h5>
-				<%
-					nn = @n.replacement
-					nn = nn.replacement if nn
-					while nn
-						
-				%>
-						<div><%= render partial:'node/node', object:nn %></div>
-				<%
-						nn = nn.replacement
-					end
-					
-				%>
-			</div>				
 		</div>
 	</div>
+<% if @n.copy_of and @n.copy_of.copy_of %>	
+	<h5>Older Versions <span class="muted">(in reverse order)</span></h5>
+	<%
+		nn = @n.copy_of and @n.copy_of.copy_of
+		while nn
+	%>
+			<%= render partial:'node/node', object:nn %>
+	<%
+			nn = nn.copy_of
+		end
+	%>
+<% end %>
+<% if @n.replacement and @n.replacement.replacement %>
+	<h5>Later versions</h5>
+	<%
+		nn = @n.replacement.replacement
+		while nn
+	%>
+			<%= render partial:'node/node', object:nn %>
+	<%
+			nn = nn.replacement
+		end
+	%>
+<% end %>
 </div>
 
 <%= render partial: "edit/sql_results" %>

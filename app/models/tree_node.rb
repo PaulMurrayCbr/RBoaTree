@@ -14,6 +14,14 @@ class TreeNode < ActiveRecord::Base
 
   belongs_to :tree, class_name: :Tree, foreign_key: :tree_id
 
+  def branches
+    return copies.select { |n| n != replacement }
+  end
+
+  def merges
+    return replacement_of.select { |n| n != copy_of }
+  end
+
   def end?
     id == 0
   end

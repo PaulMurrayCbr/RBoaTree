@@ -2,25 +2,30 @@
 	 render partial: 'edit/sidebar'
 end  %>
 <h1>About editing</h1>
-<p>You will start with a completely blank data set. No trees or nodes except for the 'end' tree and 'end' node.</p>
+<p>You will start with a data set containong two sample tree fragments from APC and AFD.</p>
 <ol>
 	<li>
-		To begin, create a 'tree' and create a 'workspace'.
+		To begin, <u>create</u> a 'workspace'. Give it a short name: "WS" works.
 	</li>
 	<li>
-		Edit the workspace. Begin by 'attaching' the currently empty root node of the tree to your workspace.		
+		Edit the workspace. Begin by <u>attatching</u> one of the nodes in the sample tree to your workspace.
+		<ul><li>To do this, make a note of the node number - the number in subscript after a node.</li>
+			<li>It may help to have multiple browser windows.</li></ul>
 	</li>
 	<li>
-		'Check out' the tree root node <em>in the context of youe workspace</em>. This will create a new draft node in the workspace.
+		<u>Check out</u> an attached node <em>in the context of your workspace</em>. This will create a new draft node in the workspace.
+		<ul><li>This sample app adds an asterisk to the name of the node.</li>
+			<li>If you check out a node deeper down in the hierarchy, all nodes above that point up to the attachemnet point are also checked out.</li>
+		</ul>
 	</li>
 	<li>
-		Edit that draft node. Add other draft nodes, move them about, delete them. Even atach nodes from other trees that you have already created.
+		<u>Edit</u> that draft node. Add other draft nodes, move them about, delete them. Even attach nodes from other trees that you have already created.
 	</li>
 	<li>
-		Finalize the root draft node - the one that was originally a copy of the root tree node.
+		<u>Finalize</u> the root draft node - the one that was originally a copy of the root tree node.
 	</li>
 	<li>
-		Apply that new root node. This will move it into the original tree, and trigger a new version of your tree.
+		<u>Apply</u> that new root node. This will move it into the original tree, and trigger a new version of your tree.
 	</li>
 </ol>
 	<p>Other things to do are:</p>
@@ -30,7 +35,7 @@ end  %>
 		Experiment with the link types - tracking, versioning, and fixed.
 	</li>
 	<li>
-		Try a complex merge.
+		Try a <%= link_to "complex merge", {controller: :versioning, action: :index} %>. This may do unexpected things!
 	</li>
 	<li>
 		Visit the <%= link_to "validation page", {controller: :validate_data, action: :index} %>, and see what invariants are always true of the data
@@ -39,18 +44,16 @@ end  %>
 		Examine the nodes and see how they link. Try out the comparison tool.
 	</li>
 	<li>
-		Finally - examine the SQL and data structures to see the transformations that are performed.
+		Finally - examine the SQL in 'operations.sql' and 'versioning.sql' and the data in your postgres database to see 
+		the transformations that are performed and the logic behind them.
 	</li>
 </ul>
 
 <div>
 <p>
 	<b>Please note:</b> this is a test app, and the primary things being tested are the underlying database transformations. This means that this 
-	webapp will permit you to try to do things that the underlying database will refuse to do. This is normal. A real implementation
+	webapp will permit you to try to do things that the underlying database will refuse to do. A real implementation
 	of these algorithms would not present those options to you in the first place, but here we are testing that these operations are correctly
-	rejected at the database layer. 
-</p>
-<p>
-	When this happens, you <em>should</em> get a more-or-less meaningful error message and be sent to an appropriate web page.
+	rejected at the database layer. When this happens, you <em>should</em> get a more-or-less meaningful error message and be sent to an appropriate web page.
 </p>
 </div>

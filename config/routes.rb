@@ -1,6 +1,7 @@
 Rboatree::Application.routes.draw do
   
   root 'home#index'
+  get 'legend' => 'home#legend'
 
   get 'validation' => 'validate_data#index'
   get 'validate' => 'validate_data#validate'
