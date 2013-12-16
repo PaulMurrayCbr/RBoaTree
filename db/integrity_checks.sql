@@ -209,21 +209,28 @@ begin
 		select count(*) from ll where  ll.id = ll.prev_node_id into _zz;
 		perform boatree_validate_equalsi('there should be no loops in the node.prev structure', 0, _zz);
 
-		_zz := null;
-		with recursive ll as (
-			select id, next_node_id from tree_node
-			union all
-			select ll.id, nn.next_node_id
-			from (
-				select id, next_node_id from tree_node
-				union all
-				select prev_node_id as id, id as next_node_id from tree_node
-			) nn, ll
-			where ll.next_node_id = nn.id
-			and ll.id <> ll.next_node_id -- kill infinite loop
-		)
-		select count(*) from ll where  ll.id = ll.next_node_id into _zz;
-		perform boatree_validate_equalsi('there should be no loops in the union of the node.next and inverse node.prev structure', 0, _zz);
+		-- This check is wrong. Not in the sense of 'wrongly implemented', but in the sense of
+		-- 'what we are trying to implement should not be done'.
+		-- We do not fobid these kinds of loops, because they are a legitimate data artiafct.
+		-- This is what happens when a rollback of a branch occurs: a node's 'next' node 
+		-- becomes the node that it was originally a copy of.
+		--
+		--	_zz := null;
+		--	with recursive ll as (
+		--		select id, next_node_id from tree_node
+		--		union all
+		--		select ll.id, nn.next_node_id
+		--		from (
+		--			select id, next_node_id from tree_node
+		--			union all
+		--			select prev_node_id as id, id as next_node_id from tree_node
+		--		) nn, ll
+		--		where ll.next_node_id = nn.id
+		--		and ll.id <> ll.next_node_id -- kill infinite loop
+		--	)
+		--	select count(*) from ll where  ll.id = ll.next_node_id into _zz;
+		--	perform boatree_validate_equalsi('there should be no loops in the union of the node.next and inverse node.prev structure', 0, _zz);
+		
 	exception
 		when others then
 			perform boatree_validate_msg('ERR ' || sqlstate || ': ' || sqlerrm, 'e');
