@@ -21,6 +21,11 @@ begin
 end;
 $$ language plpgsql;
 
+-- TODO: versioning should be performed on one tree at a time
+-- TODO: versioning should move workspace nodes into the target tree
+-- TODO: versioning should refuse to version nodes not in the target three
+-- TODO: versioning should refuse to version to nodes not in the target tree or a workspace
+
 create or replace function boatree_versioning_exec() returns void as
 $$
 declare

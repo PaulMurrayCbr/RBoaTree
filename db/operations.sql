@@ -282,6 +282,84 @@ end
 $$
 language plpgsql;
 
+-- permits finer-grained control of the checkout process
+create or replace function boatree_checkout_link(_link_id integer)  returns void as $$
+declare 
+	_zz integer;
+	_tree_type char(1);
+	_ts timestamp without time zone;
+	_new_node_id integer;
+	_new_link_id integer;
+begin
+	_ts := localtimestamp;
+	
+    raise notice 'boatree_checkout_link(%, %)', _link_id, _ws_id;
+
+    _zz :=  null;
+	select count(*) ct from tree_link where id = _link_id into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'link % not found', _link_id;
+		return;
+	end if;
+
+	_zz :=  null;
+	select count(*) ct from tree_link l, tree_node n
+	where l.id = _link_id 
+		and l.super_node_id = n.id
+		and n.uri is null
+	into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'supernode of link % is not a draft node', _link_id;
+		return;
+	end if;
+
+	_zz :=  null;
+	select count(*) ct from tree_link l, tree_node n
+	where l.id = _link_id 
+		and l.sub_node_id = n.id
+		and n.uri is not null
+	into _zz;
+	if _zz <> 1 
+	then
+		raise exception 'subnode of link % is not a final node', _link_id;
+		return;
+	end if;
+
+	-----------------------------------------------------
+	-- END OF CHECKS, BEGINNING OF OPERATIONS  
+
+  	insert into tree_node (
+  		created_at,
+  		updated_at,
+  		name,
+  		tree_id
+  	)
+  	select
+  		_ts, _ts, sub._name || '*', sup.tree_id
+  	from tree_node sup, tree_node sub, tree_link l
+  	where 
+  		l.id = _link_id
+  		and l.super_node_id = sup.id
+  		and l.sub_node_id = sub.id
+  	returning id into _new_node_id;
+	
+	insert into tree_link (
+	  	created_at,updated_at,super_node_id,sub_node_id,link_type
+	)
+	select _ts, _ts, _new_node_id, l2.sub_node_id, l2.link_type
+		from tree_link l, tree_link l2
+		where l.id - _link_id
+		and l.sub_node_id = l2.super_node_id
+	;
+	
+	update tree_link
+	set sub_node_id = _new_node_id
+	where id = _link_id;
+end 
+$$
+language plpgsql;
 
 create or replace function boatree_checkout_node(_node_id integer, _ws_id integer) returns integer as $$
 declare 
@@ -292,7 +370,7 @@ declare
 begin
 	_ts := localtimestamp;
 	
-    raise notice 'boatree_checkout_node(%, ''%'')', _node_id, _ws_id;
+    raise notice 'boatree_checkout_node(%, %)', _node_id, _ws_id;
 
     _zz :=  null;
 	select count(*) ct from tree_node where id = _node_id into _zz;
@@ -331,7 +409,6 @@ begin
 	 * set will be empty.
 	 */
 	
-	
     create temporary table new_nodes (
 		curr_node_id integer primary key,
 		new_node_id integer
@@ -360,7 +437,7 @@ begin
 	select count(*) ct from new_nodes into _zz;
 	if _zz = 0 
 	then
-		raise exception 'node % does not appeear to be in workspace %', _node_id, _ws_id;
+		raise exception 'node % does not appear to be in workspace %', _node_id, _ws_id;
 		return null;
 	end if;
 		
@@ -385,12 +462,6 @@ begin
 		_ws_id, -- new node is owned by the workspace
 		curr_node_id -- prev version
 	from new_nodes, tree_node n where curr_node_id = n.id;
-	
-    create temporary table new_links (
-		curr_link_id integer primary key,
-		new_link_id integer
-	)
-	on commit drop;
 	
 	insert into tree_link (
 	  	created_at,updated_at,super_node_id,sub_node_id,link_type

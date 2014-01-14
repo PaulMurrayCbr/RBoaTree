@@ -58,6 +58,13 @@ module BoatreeOperations
     end
   end
   
+  def boatree_checkout_link(link_id)
+    db_perform do
+      db_call :boatree_checkout_link, link_id
+      ok "Link #{link_id} checked out"
+    end
+  end
+
   def boatree_checkout_node(node_id, workspace_id)
     db_perform do
       n = db_call :boatree_checkout_node, node_id, workspace_id
